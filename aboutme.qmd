@@ -5,4 +5,6 @@ output:
       toc: FALSE
 ---
 
-Add some text and a figure describing myself.
+Basic information
+
+Hello everyone, my name is Weifan Wu. I am currently a third-year Ph.D. student in food science and technology
