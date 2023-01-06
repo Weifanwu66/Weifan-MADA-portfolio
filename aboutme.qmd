@@ -7,6 +7,8 @@ output:
 
 ![](picture.png){fig-align="center" width="300"}
 
+-   [https://www.linkedin.com/in/weifan-wu-78604a162/](https://www.linkedin.com/in/weifan-wu-78604a162/){style="blue"}
+
 ### **Basic information**
 
 Hello everyone, my name is Weifan Wu. I am currently a third-year Ph.D. student in food science and technology. My focus is about antimicrobial activity of pomegranate against common foodborne pathogens.
