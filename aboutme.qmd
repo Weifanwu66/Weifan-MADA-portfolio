@@ -5,6 +5,22 @@ output:
       toc: FALSE
 ---
 
-Basic information
+![](picture.png){fig-align="center" width="300"}
 
-Hello everyone, my name is Weifan Wu. I am currently a third-year Ph.D. student in food science and technology
+### **Basic information**
+
+Hello everyone, my name is Weifan Wu. I am currently a third-year Ph.D. student in food science and technology. My focus is about antimicrobial activity of pomegranate against common foodborne pathogens.
+
+### **Statistical experience**
+
+I was first exposed to statistics due to the requirement of program of study, however, I have gradually developed deep interest in statistical analysis, especially when it's applied to data in public health area. The statistics courses I have taken include experimental design, applied data analysis using SPSS, spatial epidemiology. Therefore, I have knowledge of statistics and some experience with data analysis using softwares such as R, SPSS, SAS. Since my interests mainly lie with public health data , I would like to gain in-depth experience with handling real-world public health data using R, which is something that I am looking forward to getting from this course.🥳
+
+### **Fun fact about me**
+
+my eyebrows can dance!🤣
+
+### **Unknown facts about data science**
+
+The attached linked is about 7 surprising facts about data science. The most striking fact is that less than 0.5% of all data we create is ever analysed and used.
+
+<https://www.lewagon.com/blog/data-science-facts>
