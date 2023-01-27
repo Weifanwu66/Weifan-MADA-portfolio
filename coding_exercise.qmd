@@ -102,3 +102,33 @@ broom::tidy(lm2,conf.int=TRUE)%>%
 ```
 
 based on the p_value for each fit, we can see that infant mortality can significantly predict life expectancy whereas population size can not predict the life expectancy
+
+-----------------------------------------------------------------------------------------------------------------------
+                                                           Aidan Troha Edits
+```{r}
+# Creates a new data frame which removes rows without reported gdp data &
+# groups based on region
+africa_GDP <- africadata %>%
+                 filter(!(is.na(gdp))) %>%
+                 group_by(region)
+
+# Plots a "LOESS" model predicting log-scale GDP over time by region
+ggplot(africa_GDP,aes(x=year,y=log(gdp),color=region,fill=region)) +
+   geom_smooth(alpha=0.15) +
+   labs(y="Log scale GDP",title="GDP Growth Over 50 Year Period by Region")
+```
+```{r}
+# Plots a violin plot displaying the distribution of life expectancies
+# according to region
+ggplot(aes(region,life_expectancy,fill=region),data=africa_GDP)+
+          geom_violin() +
+          scale_x_discrete(labels = NULL, breaks = NULL) +
+          labs(x=NULL,y="Life Expectancy",title="Life Expectancy Distributed by Region")
+```
+```{r}
+# Fits a linear regression model using log-scale gdp to predict life expectancy
+lm3 <- lm(life_expectancy~log(gdp),data=africa_GDP)
+
+#summary of linear regression model 3
+summary(lm3)
+```
