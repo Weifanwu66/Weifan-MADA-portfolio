@@ -1,0 +1,62 @@
+---
+title: "data analysis exercise"
+author: "Weifan Wu"
+editor: visual
+---
+
+#data description This data set was found on [data.cdc.gov](https://data.cdc.gov/Foodborne-Waterborne-and-Related-Diseases/Botulism/66i6-hisz). The data set contains the information regarding the reported botulism cases, a national notifiable disease, reported in the United states. There are five variables presented in the header: State, Year, BotType (the type of transmission), ToxinType (the type of toxin), and Count (reported cases)
+
+#Setup load packages
+
+```{r}
+library(readr)#for loading csv file
+library(here)#to set relative paths
+library(dplyr)#for data processing and cleaning
+library(tidyr)#for data processing and cleaning
+library(skimr)#for browsing data
+library(forcats)#for processing categorical data
+```
+
+#data loading
+
+```{r}
+data_location=here("exercise","data","raw_data","Botulism.csv")
+botulism=read_csv(data_location)
+```
+
+#checking data
+
+```{r}
+#checking the variable type
+glimpse(botulism)
+#checking the first few row of raw data
+head(botulism,n=10)
+```
+
+#data cleaning after checking the data, R consider the numbers under `Year` as regular numbers (double), so we need to change it to character; Also, I consider `Count` as the outcome of interest, `ToxinType` & `BotType` might associate with the outcome in certain way. I am also interested in the spread of botulism-infection cases in the `states` and in different `years`.
+
+```{r}
+#convert Year to character
+d1=botulism%>%
+ mutate(Year=as.character(Year))
+#check
+skim(d1)
+glimpse(d1)
+#convert Toxin type to a categorical variable
+d2=d1%>%
+  mutate(ToxinType=as_factor(ToxinType),BotType=as_factor(BotType))
+#check d2
+skim(d2)
+glimpse(d2)
+summary(d2)
+```
+
+#save data
+
+```{r}
+#assign the processed data to an object called processeddata
+processeddata=d2
+#set a relative path for saved data
+save_data_location=here("exercise","data","processed_data","processeddata.rds")
+saveRDS(processeddata,file=save_data_location)
+```

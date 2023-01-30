@@ -60,8 +60,11 @@ ggplot(data=pop_longevity)+
 ```
 
 ```{r}
-#filter out the year without missing values
-filter(africadata,is.na(infant_mortality))
+#filter out the year without missing values and create a data frame contains the year and count
+dataframe=filter(africadata,is.na(infant_mortality))%>%
+  group_by(year)%>%
+  count(year)
+dataframe
 #create a new data frame containg the data for the year 2000
 year2000=filter(africadata,year==2000)
 #get a overview of new data frame year2000
@@ -69,6 +72,7 @@ str(year2000)
 #get a summary of year2000
 summary(year2000)
 ```
+
 
 ```{r}
 #plotting the relationship between life expectancy and infant mortality for year 2000
