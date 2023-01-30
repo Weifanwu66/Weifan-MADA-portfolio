@@ -1,9 +1,9 @@
 ---
 title: "data analysis exercise"
-author: "Weifan Wu"
-editor: visual
+output:
+  html_document:
+    toc: FALSE
 ---
-
 #data description This data set was found on [data.cdc.gov](https://data.cdc.gov/Foodborne-Waterborne-and-Related-Diseases/Botulism/66i6-hisz). The data set contains the information regarding the reported botulism cases, a national notifiable disease, reported in the United states. There are five variables presented in the header: State, Year, BotType (the type of transmission), ToxinType (the type of toxin), and Count (reported cases)
 
 #Setup load packages

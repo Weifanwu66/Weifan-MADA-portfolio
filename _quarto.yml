@@ -11,7 +11,9 @@ website:
       - text: "Projects"
         menu:
           - text: "R Coding Exercise"
-            href: ./coding_exercise.html
+            href: ./exercise/code/analysis_code/coding_exercise.html
+          - text: "Data Analysis Exercise "
+            href: ./exercise/code/data_processing_code/dataanalysis_exercise.html  
           - text: "Visualization Exercise"
             href: ./visualization_exercise.html
           - text: "Tidy Tuesday Exercise"
