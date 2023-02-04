@@ -4,6 +4,7 @@ output:
   html_document:
     toc: FALSE
 ---
+
 #data description This data set was found on [data.cdc.gov](https://data.cdc.gov/Foodborne-Waterborne-and-Related-Diseases/Botulism/66i6-hisz). The data set contains the information regarding the reported botulism cases, a national notifiable disease, reported in the United states. There are five variables presented in the header: State, Year, BotType (the type of transmission), ToxinType (the type of toxin), and Count (reported cases)
 
 #Setup load packages
@@ -60,3 +61,82 @@ processeddata=d2
 save_data_location=here("exercise","data","processed_data","processeddata.rds")
 saveRDS(processeddata,file=save_data_location)
 ```
+
+## Deanna Lanier Additions
+
+```{r}
+# read .rds file
+data_location=here("exercise","data","processed_data","processeddata.rds")
+processedData = readRDS(data_location)
+
+```
+
+```{r}
+#Get Summary
+summary(processedData)
+```
+
+Determine specific years to visualize
+
+```{r}
+processedData = processedData %>% 
+  mutate_at(
+    vars('Year'), 
+    as_date,
+    format = "%y"
+    )
+
+processedData%>%
+  count(Year)
+```
+
+Focus on years 2000-2017
+
+```{r}
+processedData = processedData %>% filter(Year >='2000-01-01' ) 
+
+processedData%>%
+  count(Year)
+```
+
+**What are the types of botulism found in this dataset?**
+
+```{r}
+processedData %>% pull(BotType) %>% unique()
+```
+
+**What type of botulism was the most prevalent from 2000-2017**
+
+```{r}
+#Create table of the sums of the count column based on conditions 
+botulism_2000s =  data.frame (BotType  = c("Foodborn", "Infant", "Wound", "other"),
+                  Total = c(sum(processedData[which(processedData$BotType=='Foodborne'), 5]), sum(processedData[which(processedData$BotType=='Infant'), 5]),sum(processedData[which(processedData$BotType=='Wound'), 5]),sum(processedData[which(processedData$BotType=='Other'), 5]))
+                  )
+botulism_2000s
+```
+
+Infant is the most prevalent type of botulism from 2000-2017. Followed by wound and foodborne.
+
+**What is the prevalence of the types each year?**
+
+```{r}
+#Plot Botulism types
+botulism_plot = ggplot(processedData, aes(fill=BotType, y=Count, x=Year)) + 
+    geom_bar(position="dodge", stat="identity")+scale_x_date(date_breaks = "1 year", date_labels = "%Y")+theme(legend.position = "bottom",axis.text.x = element_text(size = 10, angle=60, hjust=1))+ggtitle("Types of Botulism Cases between 2000 and 2017")+theme(plot.title = element_text(hjust = 0.5))
+
+botulism_plot
+```
+
+**What toxins are leading in infant botulism?**
+
+```{r}
+Infant = processedData %>% filter(BotType == "Infant", Year >='2000-01-01' )
+
+#Plot Foodborn Botulism 
+infant_plot = ggplot(Infant, aes(fill=ToxinType, y=Count, x=Year)) + 
+    geom_bar(position="dodge", stat="identity")+scale_x_date(date_breaks = "1 year", date_labels = "%Y")+theme(legend.position = "bottom",axis.text.x = element_text(size = 10, angle=60, hjust=1))+ggtitle("Infant Botulism types for 2000-2017")+theme(plot.title = element_text(hjust = 0.5))
+
+infant_plot
+```
+
+The most prominent toxin type in infant botulism between 2000 and 2017 is toxin A
