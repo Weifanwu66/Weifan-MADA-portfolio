@@ -5,4 +5,6 @@ output:
     toc: FALSE
 ---
 
-Placeholder file for the future visualization exercise.
+The plot that I try to reproduce here is from [fivethirtyeight.com](https://fivethirtyeight.com/features/marriage-isnt-dead-yet/). The marriage isn't dead-yet. It depicts the marriage rates by education and race in the age group from 25 to 34
+
+![](images/15b0877b7b573c628a0d008b8c79d0f.png)

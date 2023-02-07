@@ -9,6 +9,8 @@ output:
 
 #Setup load packages
 
+
+
 ```{r}
 library(readr)#for loading csv file
 library(here)#to set relative paths
@@ -16,6 +18,8 @@ library(dplyr)#for data processing and cleaning
 library(tidyr)#for data processing and cleaning
 library(skimr)#for browsing data
 library(forcats)#for processing categorical data
+library(lubridate)#for processing date/time
+library(ggplot2)
 ```
 
 #data loading

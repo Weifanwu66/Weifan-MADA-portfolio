@@ -232,12 +232,26 @@ Attaching package: 'dplyr'</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)<span class="co">#for data processing and cleaning</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)<span class="co">#for browsing data</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)<span class="co">#for processing categorical data</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(forcats)<span class="co">#for processing categorical data</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)<span class="co">#for processing date/time</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Loading required package: timechange</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'lubridate'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    date, intersect, setdiff, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>#data loading</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>data_location<span class="ot">=</span><span class="fu">here</span>(<span class="st">"exercise"</span>,<span class="st">"data"</span>,<span class="st">"raw_data"</span>,<span class="st">"Botulism.csv"</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>botulism<span class="ot">=</span><span class="fu">read_csv</span>(data_location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>data_location<span class="ot">=</span><span class="fu">here</span>(<span class="st">"exercise"</span>,<span class="st">"data"</span>,<span class="st">"raw_data"</span>,<span class="st">"Botulism.csv"</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>botulism<span class="ot">=</span><span class="fu">read_csv</span>(data_location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Rows: 2280 Columns: 5
 ── Column specification ────────────────────────────────────────────────────────
@@ -251,8 +265,8 @@ dbl (2): Year, Count
 </div>
 <p>#checking data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#checking the variable type</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(botulism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#checking the variable type</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(botulism)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 2,280
 Columns: 5
@@ -262,8 +276,8 @@ $ BotType   &lt;chr&gt; "Foodborne", "Foodborne", "Foodborne", "Foodborne", "Foo
 $ ToxinType &lt;chr&gt; "Unknown", "Unknown", "E", "E", "E", "E", "E", "E", "Unknown…
 $ Count     &lt;dbl&gt; 3, 4, 5, 1, 5, 10, 2, 1, 1, 1, 2, 9, 3, 1, 2, 3, 1, 3, 3, 2,…</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#checking the first few row of raw data</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(botulism,<span class="at">n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">#checking the first few row of raw data</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(botulism,<span class="at">n=</span><span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 10 × 5
    State   Year BotType   ToxinType Count
@@ -282,11 +296,11 @@ $ Count     &lt;dbl&gt; 3, 4, 5, 1, 5, 10, 2, 1, 1, 1, 2, 9, 3, 1, 2, 3, 1, 3, 3
 </div>
 <p>#data cleaning after checking the data, R consider the numbers under <code>Year</code> as regular numbers (double), so we need to change it to character; Also, I consider <code>Count</code> as the outcome of interest, <code>ToxinType</code> &amp; <code>BotType</code> might associate with the outcome in certain way. I am also interested in the spread of botulism-infection cases in the <code>states</code> and in different <code>years</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">#convert Year to character</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>d1<span class="ot">=</span>botulism<span class="sc">%&gt;%</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">Year=</span><span class="fu">as.character</span>(Year))</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#check</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(d1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">#convert Year to character</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>d1<span class="ot">=</span>botulism<span class="sc">%&gt;%</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a> <span class="fu">mutate</span>(<span class="at">Year=</span><span class="fu">as.character</span>(Year))</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">#check</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(d1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped">
 <caption>Data summary</caption>
@@ -443,7 +457,7 @@ $ Count     &lt;dbl&gt; 3, 4, 5, 1, 5, 10, 2, 1, 1, 1, 2, 9, 3, 1, 2, 3, 1, 3, 3
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(d1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(d1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 2,280
 Columns: 5
@@ -453,11 +467,11 @@ $ BotType   &lt;chr&gt; "Foodborne", "Foodborne", "Foodborne", "Foodborne", "Foo
 $ ToxinType &lt;chr&gt; "Unknown", "Unknown", "E", "E", "E", "E", "E", "E", "Unknown…
 $ Count     &lt;dbl&gt; 3, 4, 5, 1, 5, 10, 2, 1, 1, 1, 2, 9, 3, 1, 2, 3, 1, 3, 3, 2,…</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#convert Toxin type to a categorical variable</span></span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>d2<span class="ot">=</span>d1<span class="sc">%&gt;%</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ToxinType=</span><span class="fu">as_factor</span>(ToxinType),<span class="at">BotType=</span><span class="fu">as_factor</span>(BotType))</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">#check d2</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co">#convert Toxin type to a categorical variable</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>d2<span class="ot">=</span>d1<span class="sc">%&gt;%</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">ToxinType=</span><span class="fu">as_factor</span>(ToxinType),<span class="at">BotType=</span><span class="fu">as_factor</span>(BotType))</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">#check d2</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped">
 <caption>Data summary</caption>
@@ -637,7 +651,7 @@ $ Count     &lt;dbl&gt; 3, 4, 5, 1, 5, 10, 2, 1, 1, 1, 2, 9, 3, 1, 2, 3, 1, 3, 3
 </tbody>
 </table>
 </div>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 2,280
 Columns: 5
@@ -647,7 +661,7 @@ $ BotType   &lt;fct&gt; Foodborne, Foodborne, Foodborne, Foodborne, Foodborne, F
 $ ToxinType &lt;fct&gt; "Unknown", "Unknown", "E", "E", "E", "E", "E", "E", "Unknown…
 $ Count     &lt;dbl&gt; 3, 4, 5, 1, 5, 10, 2, 1, 1, 1, 2, 9, 3, 1, 2, 3, 1, 3, 3, 2,…</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(d2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>    State               Year                BotType       ToxinType  
  Length:2280        Length:2280        Foodborne: 904   A      :964  
@@ -669,14 +683,151 @@ $ Count     &lt;dbl&gt; 3, 4, 5, 1, 5, 10, 2, 1, 1, 1, 2, 9, 3, 1, 2, 3, 1, 3, 3
 </div>
 <p>#save data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">#assign the processed data to an object called processeddata</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>processeddata<span class="ot">=</span>d2</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">#set a relative path for saved data</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>save_data_location<span class="ot">=</span><span class="fu">here</span>(<span class="st">"exercise"</span>,<span class="st">"data"</span>,<span class="st">"processed_data"</span>,<span class="st">"processeddata.rds"</span>)</span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(processeddata,<span class="at">file=</span>save_data_location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">#assign the processed data to an object called processeddata</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>processeddata<span class="ot">=</span>d2</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">#set a relative path for saved data</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>save_data_location<span class="ot">=</span><span class="fu">here</span>(<span class="st">"exercise"</span>,<span class="st">"data"</span>,<span class="st">"processed_data"</span>,<span class="st">"processeddata.rds"</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(processeddata,<span class="at">file=</span>save_data_location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<section id="deanna-lanier-additions" class="level2">
+<h2 class="anchored" data-anchor-id="deanna-lanier-additions">Deanna Lanier Additions</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># read .rds file</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>data_location<span class="ot">=</span><span class="fu">here</span>(<span class="st">"exercise"</span>,<span class="st">"data"</span>,<span class="st">"processed_data"</span>,<span class="st">"processeddata.rds"</span>)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>processedData <span class="ot">=</span> <span class="fu">readRDS</span>(data_location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Get Summary</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(processedData)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    State               Year                BotType       ToxinType  
+ Length:2280        Length:2280        Foodborne: 904   A      :964  
+ Class :character   Class :character   Infant   :1151   B      :803  
+ Mode  :character   Mode  :character   Wound    : 152   Unknown:370  
+                                       Other    :  73   E      : 72  
+                                                        F      : 43  
+                                                        Bf     :  8  
+                                                        (Other): 20  
+     Count       
+ Min.   : 1.000  
+ 1st Qu.: 1.000  
+ Median : 1.000  
+ Mean   : 3.199  
+ 3rd Qu.: 3.000  
+ Max.   :59.000  
+                 </code></pre>
+</div>
+</div>
+<p>Determine specific years to visualize</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>processedData <span class="ot">=</span> processedData <span class="sc">%&gt;%</span> </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate_at</span>(</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">vars</span>(<span class="st">'Year'</span>), </span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    as_date,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">format =</span> <span class="st">"%y"</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>processedData<span class="sc">%&gt;%</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 111 × 2
+   Year           n
+   &lt;date&gt;     &lt;int&gt;
+ 1 1899-01-01     1
+ 2 1902-01-01     1
+ 3 1906-01-01     1
+ 4 1910-01-01     2
+ 5 1911-01-01     1
+ 6 1912-01-01     3
+ 7 1913-01-01     4
+ 8 1914-01-01     3
+ 9 1915-01-01     4
+10 1916-01-01     6
+# … with 101 more rows</code></pre>
+</div>
+</div>
+<p>Focus on years 2000-2017</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>processedData <span class="ot">=</span> processedData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(Year <span class="sc">&gt;=</span><span class="st">'2000-01-01'</span> ) </span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>processedData<span class="sc">%&gt;%</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(Year)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 18 × 2
+   Year           n
+   &lt;date&gt;     &lt;int&gt;
+ 1 2000-01-01    45
+ 2 2001-01-01    48
+ 3 2002-01-01    43
+ 4 2003-01-01    38
+ 5 2004-01-01    46
+ 6 2005-01-01    42
+ 7 2006-01-01    40
+ 8 2007-01-01    48
+ 9 2008-01-01    50
+10 2009-01-01    44
+11 2010-01-01    45
+12 2011-01-01    52
+13 2012-01-01    56
+14 2013-01-01    50
+15 2014-01-01    47
+16 2015-01-01    58
+17 2016-01-01    62
+18 2017-01-01    46</code></pre>
+</div>
+</div>
+<p><strong>What are the types of botulism found in this dataset?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>processedData <span class="sc">%&gt;%</span> <span class="fu">pull</span>(BotType) <span class="sc">%&gt;%</span> <span class="fu">unique</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] Foodborne Infant    Wound     Other    
+Levels: Foodborne Infant Wound Other</code></pre>
+</div>
+</div>
+<p><strong>What type of botulism was the most prevalent from 2000-2017</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Create table of the sums of the count column based on conditions </span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>botulism_2000s <span class="ot">=</span>  <span class="fu">data.frame</span> (<span class="at">BotType  =</span> <span class="fu">c</span>(<span class="st">"Foodborn"</span>, <span class="st">"Infant"</span>, <span class="st">"Wound"</span>, <span class="st">"other"</span>),</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>                  <span class="at">Total =</span> <span class="fu">c</span>(<span class="fu">sum</span>(processedData[<span class="fu">which</span>(processedData<span class="sc">$</span>BotType<span class="sc">==</span><span class="st">'Foodborne'</span>), <span class="dv">5</span>]), <span class="fu">sum</span>(processedData[<span class="fu">which</span>(processedData<span class="sc">$</span>BotType<span class="sc">==</span><span class="st">'Infant'</span>), <span class="dv">5</span>]),<span class="fu">sum</span>(processedData[<span class="fu">which</span>(processedData<span class="sc">$</span>BotType<span class="sc">==</span><span class="st">'Wound'</span>), <span class="dv">5</span>]),<span class="fu">sum</span>(processedData[<span class="fu">which</span>(processedData<span class="sc">$</span>BotType<span class="sc">==</span><span class="st">'Other'</span>), <span class="dv">5</span>]))</span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>                  )</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>botulism_2000s</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   BotType Total
+1 Foodborn   344
+2   Infant  1972
+3    Wound   386
+4    other    52</code></pre>
+</div>
+</div>
+<p>Infant is the most prevalent type of botulism from 2000-2017. Followed by wound and foodborne.</p>
+<p><strong>What is the prevalence of the types each year?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot Botulism types</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>botulism_plot <span class="ot">=</span> <span class="fu">ggplot</span>(processedData, <span class="fu">aes</span>(<span class="at">fill=</span>BotType, <span class="at">y=</span>Count, <span class="at">x=</span>Year)) <span class="sc">+</span> </span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">position=</span><span class="st">"dodge"</span>, <span class="at">stat=</span><span class="st">"identity"</span>)<span class="sc">+</span><span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"1 year"</span>, <span class="at">date_labels =</span> <span class="st">"%Y"</span>)<span class="sc">+</span><span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>,<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>, <span class="at">angle=</span><span class="dv">60</span>, <span class="at">hjust=</span><span class="dv">1</span>))<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">"Types of Botulism Cases between 2000 and 2017"</span>)<span class="sc">+</span><span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>botulism_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dataanalysis_exercise_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p><strong>What toxins are leading in infant botulism?</strong></p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a>Infant <span class="ot">=</span> processedData <span class="sc">%&gt;%</span> <span class="fu">filter</span>(BotType <span class="sc">==</span> <span class="st">"Infant"</span>, Year <span class="sc">&gt;=</span><span class="st">'2000-01-01'</span> )</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a><span class="co">#Plot Foodborn Botulism </span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>infant_plot <span class="ot">=</span> <span class="fu">ggplot</span>(Infant, <span class="fu">aes</span>(<span class="at">fill=</span>ToxinType, <span class="at">y=</span>Count, <span class="at">x=</span>Year)) <span class="sc">+</span> </span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">geom_bar</span>(<span class="at">position=</span><span class="st">"dodge"</span>, <span class="at">stat=</span><span class="st">"identity"</span>)<span class="sc">+</span><span class="fu">scale_x_date</span>(<span class="at">date_breaks =</span> <span class="st">"1 year"</span>, <span class="at">date_labels =</span> <span class="st">"%Y"</span>)<span class="sc">+</span><span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"bottom"</span>,<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">size =</span> <span class="dv">10</span>, <span class="at">angle=</span><span class="dv">60</span>, <span class="at">hjust=</span><span class="dv">1</span>))<span class="sc">+</span><span class="fu">ggtitle</span>(<span class="st">"Infant Botulism types for 2000-2017"</span>)<span class="sc">+</span><span class="fu">theme</span>(<span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>))</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>infant_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="dataanalysis_exercise_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The most prominent toxin type in infant botulism between 2000 and 2017 is toxin A</p>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
