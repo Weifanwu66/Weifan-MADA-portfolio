@@ -61,7 +61,7 @@ education_level_labels%>%
 #using geom_line
 plot1=edu_div2%>%
 ggplot(aes(x=year,y=divorce,group=education_level,color=education_level))+
-  geom_line(size=1.5,show.legend=FALSE)+
+  geom_line(linewidth=1.5,show.legend=FALSE)+
   #geom_text(data=education_level_labels,aes(group=1,label=education_level),show.legend=FALSE)+
   labs(title="Divorce Rates By 
 Education",
@@ -89,6 +89,7 @@ Education",
   annotate("segment",x=1995,xend=1995,y=21,yend=17,color="black",size=0.7)+
   annotate("segment",x=2005,xend=2005,y=13,yend=10,color="black",size=0.7)+
   coord_fixed(ratio=2, ylim=c(0,25),xlim=c(1960,2012))    #control the ratio of y/x coordinate, but also specify the limits for y&x axis in case this function overwrite the axis range
+plot1
 ```
 
 modify the graph using geom_point to indicate the data density, obviously more data was collected from year 2000-2010
@@ -97,7 +98,7 @@ modify the graph using geom_point to indicate the data density, obviously more d
 plot2=edu_div2%>%
 ggplot(aes(x=year,y=divorce,group=education_level,color=education_level))+
   geom_point(size=3,alpha=0.7)+
-  geom_line(size=1.5,show.legend=FALSE)+
+  geom_line(linewidth=1.5,show.legend=FALSE)+
   labs(title="Divorce Rates By 
 Education",
        subtitle="Ages 35 to 44",
@@ -124,6 +125,7 @@ Education",
   annotate("segment",x=1995,xend=1995,y=21,yend=17,color="black",size=0.7)+
   annotate("segment",x=2005,xend=2005,y=13,yend=10,color="black",size=0.7)+
   coord_fixed(ratio=2, ylim=c(0,25),xlim=c(1960,2012))    #control the ratio of y/x coordinate, but also specify the limits for y&x axis in case this function overwrite the axis range
+plot2
 ```
 save the plot
 ```{r}
