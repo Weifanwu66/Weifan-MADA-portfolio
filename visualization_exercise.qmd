@@ -5,6 +5,76 @@ output:
     toc: FALSE
 ---
 
-The plot that I try to reproduce here is from [fivethirtyeight.com](https://fivethirtyeight.com/features/marriage-isnt-dead-yet/). The marriage isn't dead-yet. It depicts the marriage rates by education and race in the age group from 25 to 34
+The plot that I try to reproduce here is from [fivethirtyeight.com](https://fivethirtyeight.com/features/marriage-isnt-dead-yet/). The marriage isn't dead-yet. It depicts the divorce rates by education in the age group from 35 to 44
 
-![](images/15b0877b7b573c628a0d008b8c79d0f.png)
+![](images/5002a517b24e1a1c63c3ad92f026078.png)
+
+setup
+
+```{r}
+library(ggtext)
+library(tidyverse)
+library(here)
+```
+import data and glimpse data
+```{r}
+dataLocation=here("marriage","divorce.csv")
+rawData=read.csv(dataLocation)
+glimpse(rawData)
+```
+data wrangling
+```{r}
+#select the columns that contain the information that we need for plotting, which is year, HS_3544, SC_3544, and BAp_3544
+edu_div=rawData%>%
+  select(c(2,5:7))
+#reshape the dataset, combine all the educational levels under "educational_level" variable and their respective values under "divorce" variable
+edu_div1=edu_div%>%
+  gather(key="education_level",value="divorce",2:4)
+edu_div1
+#remove strings "_3544" since we have already chosen the age groups beforehand, recode the levels to make table more intuitive, And mutate divorce rate to percentage
+edu_div2=edu_div1%>%
+  mutate(education_level=str_replace(string=education_level,pattern="_3544",replacement=""))%>%
+  mutate(education_level=recode(education_level,"HS"="High school or less","SC"="Some college", "BAp"="College graduates"))%>%
+  mutate(divorce=divorce*100)
+edu_div2
+```
+Plotting
+```{r}
+#creating a data frame that will be used for plotting the names of education levels
+education_level_labels=edu_div2%>%
+  pivot_wider(names_from="year",values_from="divorce")%>%
+  mutate(nrow=1:n(), #create a new column indicating which row each education level is at
+         year=if_else(nrow%%2==0,"1990","1980"),#modulus function %% tells you the remainder, if the row is a even number (some college), we will take 1994,otherwise take 1985
+         divorce=if_else(nrow%%2==0,`1990`,`1980`))%>% 
+  select(education_level,year,divorce)
+education_level_labels%>%
+  mutate(year=)
+```
+
+```{r}
+#using geom_line
+edu_div2%>%
+ggplot(aes(x=year,y=divorce,group=education_level,color=education_level))+
+  geom_line(size=1.5,show.legend=FALSE)+
+  geom_text(data=education_level_labels,aes(label=education_level),show.legend=FALSE)+
+  labs(title="Divorce Rates By 
+Education",
+       subtitle="Ages 35 to 44",
+       x=NULL,y=NULL)+
+  scale_x_continuous(breaks=seq(1960,2012,by=10),labels=c("1960","'70","'80","'90","2000","'10"))+
+  scale_y_continuous(breaks=seq(0,25,by=5),labels=c("0","5","10","15","20","25%"),minor_breaks=NULL)+
+  scale_color_manual(breaks=c("High school or less","Some College","College graduates"),values=c("#6699CC","#0047AB","#89CFF0"))+
+  theme(
+        text=element_text(size=16),
+        plot.title=element_textbox_simple(size=16),
+        plot.subtitle=element_textbox_simple(size=12),
+        plot.background = element_rect(fill="#ededed"),#change the whole plot background color
+        panel.background=element_rect(fill="#ededed"),#change the panel background color
+        panel.grid.major = element_line(color="lightgrey"),
+        legend.position="none",
+        axis.text=element_text(size=12),
+        axis.ticks=element_blank()
+        )+
+  coord_fixed(ratio=100)    #control the ration of y/x coordinate
+```
+
