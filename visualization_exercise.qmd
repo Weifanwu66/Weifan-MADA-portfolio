@@ -40,7 +40,7 @@ edu_div2
 ```
 Plotting
 ```{r}
-#creating a data frame that will be used for plotting the names of education levels
+#creating a data frame that will be used for plotting the names of education levels, I eventually used annotation function to create my graph, but I still want to leave this section here
 education_level_labels=edu_div2%>%
   pivot_wider(names_from="year",values_from="divorce")%>%
   mutate(nrow=1:n(), #create a new column indicating which row each education level is at
@@ -48,7 +48,7 @@ education_level_labels=edu_div2%>%
          divorce=if_else(nrow%%2==0,`1990`,`1980`))%>% 
   select(education_level,year,divorce)
 education_level_labels%>%
-  mutate(year=)
+  mutate(year=as.numeric(year))
 ```
 
 ```{r}
@@ -56,25 +56,65 @@ education_level_labels%>%
 edu_div2%>%
 ggplot(aes(x=year,y=divorce,group=education_level,color=education_level))+
   geom_line(size=1.5,show.legend=FALSE)+
-  geom_text(data=education_level_labels,aes(label=education_level),show.legend=FALSE)+
+  #geom_text(data=education_level_labels,aes(group=1,label=education_level),show.legend=FALSE)+
   labs(title="Divorce Rates By 
 Education",
        subtitle="Ages 35 to 44",
        x=NULL,y=NULL)+
-  scale_x_continuous(breaks=seq(1960,2012,by=10),labels=c("1960","'70","'80","'90","2000","'10"))+
+  scale_x_continuous(breaks=seq(1960,2012,by=10),labels=c("1960","'70","'80","'90","2000","'10"),minor_breaks=NULL)+
   scale_y_continuous(breaks=seq(0,25,by=5),labels=c("0","5","10","15","20","25%"),minor_breaks=NULL)+
   scale_color_manual(breaks=c("High school or less","Some College","College graduates"),values=c("#6699CC","#0047AB","#89CFF0"))+
   theme(
         text=element_text(size=16),
-        plot.title=element_textbox_simple(size=16),
+        plot.title=element_textbox_simple(size=14,face="bold"),#control the size of title and subtitle
         plot.subtitle=element_textbox_simple(size=12),
         plot.background = element_rect(fill="#ededed"),#change the whole plot background color
         panel.background=element_rect(fill="#ededed"),#change the panel background color
-        panel.grid.major = element_line(color="lightgrey"),
+        panel.grid.major = element_line(color="lightgrey"), #change the grid color in the panel background
         legend.position="none",
-        axis.text=element_text(size=12),
-        axis.ticks=element_blank()
+        axis.text=element_text(size=12), #specify the text size
+        axis.ticks=element_blank()       #remove all the ticks
         )+
-  coord_fixed(ratio=100)    #control the ration of y/x coordinate
+  geom_hline(yintercept = 0)+ #highlight the x axis (when y=0)
+  annotate("text",x=1995, y=7,label="High school or less")+ #using annotate functions to add text and lines in the graph
+  annotate("text",x=1995,y=22,label="Some college")+
+  annotate("text",x=2005,y=14,label="College graduate")+
+  annotate("segment",x=1990,xend=1990,y=7,yend=16,color="black",size=0.7)+
+  annotate("segment",x=1995,xend=1995,y=21,yend=17,color="black",size=0.7)+
+  annotate("segment",x=2005,xend=2005,y=13,yend=10,color="black",size=0.7)+
+  coord_fixed(ratio=2, ylim=c(0,25),xlim=c(1960,2012))    #control the ratio of y/x coordinate, but also specify the limits for y&x axis in case this function overwrite the axis range
+```
+modify the graph using geom_point to indicate the data density, obviously more data was collected from year 2000-2010
+```{r}
+edu_div2%>%
+ggplot(aes(x=year,y=divorce,group=education_level,color=education_level))+
+  geom_point(size=3,alpha=0.7)+
+  geom_line(size=1.5,show.legend=FALSE)+
+  labs(title="Divorce Rates By 
+Education",
+       subtitle="Ages 35 to 44",
+       x=NULL,y=NULL)+
+  scale_x_continuous(breaks=seq(1960,2012,by=10),labels=c("1960","'70","'80","'90","2000","'10"),minor_breaks=NULL)+
+  scale_y_continuous(breaks=seq(0,25,by=5),labels=c("0","5","10","15","20","25%"),minor_breaks=NULL)+
+  scale_color_manual(breaks=c("High school or less","Some College","College graduates"),values=c("#6699CC","#0047AB","#89CFF0"))+
+  theme(
+        text=element_text(size=16),
+        plot.title=element_textbox_simple(size=14,face="bold"),#control the size of title and subtitle
+        plot.subtitle=element_textbox_simple(size=12),
+        plot.background = element_rect(fill="#ededed"),#change the whole plot background color
+        panel.background=element_rect(fill="#ededed"),#change the panel background color
+        panel.grid.major = element_line(color="lightgrey"), #change the grid color in the panel background
+        legend.position="none",
+        axis.text=element_text(size=12), #specify the text size
+        axis.ticks=element_blank()       #remove all the ticks
+        )+
+  geom_hline(yintercept = 0)+ #highlight the x axis (when y=0)
+  annotate("text",x=1995, y=7,label="High school or less")+ #using annotate functions to add text and lines in the graph
+  annotate("text",x=1995,y=22,label="Some college")+
+  annotate("text",x=2005,y=14,label="College graduate")+
+  annotate("segment",x=1990,xend=1990,y=7,yend=16,color="black",size=0.7)+
+  annotate("segment",x=1995,xend=1995,y=21,yend=17,color="black",size=0.7)+
+  annotate("segment",x=2005,xend=2005,y=13,yend=10,color="black",size=0.7)+
+  coord_fixed(ratio=2, ylim=c(0,25),xlim=c(1960,2012))    #control the ratio of y/x coordinate, but also specify the limits for y&x axis in case this function overwrite the axis range
 ```
 

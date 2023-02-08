@@ -20,6 +20,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -144,8 +207,236 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>The plot that I try to reproduce here is from <a href="https://fivethirtyeight.com/features/marriage-isnt-dead-yet/">fivethirtyeight.com</a>. The marriage isn’t dead-yet. It depicts the marriage rates by education and race in the age group from 25 to 34</p>
-<p><img src="images/15b0877b7b573c628a0d008b8c79d0f.png" class="img-fluid"></p>
+<p>The plot that I try to reproduce here is from <a href="https://fivethirtyeight.com/features/marriage-isnt-dead-yet/">fivethirtyeight.com</a>. The marriage isn’t dead-yet. It depicts the divorce rates by education in the age group from 35 to 44</p>
+<p><img src="images/5002a517b24e1a1c63c3ad92f026078.png" class="img-fluid"></p>
+<p>setup</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggtext)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.4.0      ✔ purrr   0.3.5 
+✔ tibble  3.1.8      ✔ dplyr   1.0.10
+✔ tidyr   1.2.1      ✔ stringr 1.5.0 
+✔ readr   2.1.3      ✔ forcats 0.5.2 
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at C:/Users/weifa/OneDrive/Documents/GitKraken/MADA/data analysis/Weifan-MADA-portfolio</code></pre>
+</div>
+</div>
+<p>import data and glimpse data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dataLocation<span class="ot">=</span><span class="fu">here</span>(<span class="st">"marriage"</span>,<span class="st">"divorce.csv"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>rawData<span class="ot">=</span><span class="fu">read.csv</span>(dataLocation)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(rawData)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 17
+Columns: 21
+$ X         &lt;int&gt; 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
+$ year      &lt;int&gt; 1960, 1970, 1980, 1990, 2000, 2001, 2002, 2003, 2004, 2005, …
+$ date      &lt;chr&gt; "1960-01-01", "1970-01-01", "1980-01-01", "1990-01-01", "200…
+$ all_3544  &lt;dbl&gt; 0.03444454, 0.04925600, 0.10600503, 0.15080495, 0.15684099, …
+$ HS_3544   &lt;dbl&gt; 0.03488887, 0.04999984, 0.10415128, 0.15938095, 0.17544616, …
+$ SC_3544   &lt;dbl&gt; 0.03366938, 0.04870549, 0.11269947, 0.16967005, 0.17380324, …
+$ BAp_3544  &lt;dbl&gt; 0.02751277, 0.04125945, 0.09777208, 0.11495533, 0.10561772, …
+$ BAo_3544  &lt;dbl&gt; 0.02751277, 0.04125945, 0.09777208, 0.11853432, 0.11053969, …
+$ GD_3544   &lt;dbl&gt; NA, NA, NA, 0.10914537, 0.09590347, 0.09719692, 0.09076255, …
+$ poor_3544 &lt;dbl&gt; 0.07195136, 0.11373582, 0.24164705, 0.32694839, 0.34308859, …
+$ mid_3544  &lt;dbl&gt; 0.02122530, 0.03030104, 0.07367154, 0.11190969, 0.11658371, …
+$ rich_3544 &lt;dbl&gt; 0.02256233, 0.02192707, 0.03501521, 0.04972527, 0.04939497, …
+$ all_4554  &lt;dbl&gt; 0.03965056, 0.05062562, 0.08818511, 0.14572572, 0.17958060, …
+$ HS_4554   &lt;dbl&gt; 0.04007142, 0.05056576, 0.08566351, 0.14077914, 0.18477676, …
+$ SC_4554   &lt;dbl&gt; 0.03870331, 0.05147270, 0.09500947, 0.16633103, 0.20110350, …
+$ BAp_4554  &lt;dbl&gt; 0.03188568, 0.04831053, 0.09103488, 0.13436974, 0.14904161, …
+$ BAo_4554  &lt;dbl&gt; 0.03188568, 0.04831053, 0.09103488, 0.13566093, 0.15369313, …
+$ GD_4554   &lt;dbl&gt; NA, NA, NA, 0.1327413, 0.1425498, 0.1417453, 0.1367771, 0.14…
+$ poor_4554 &lt;dbl&gt; 0.07537252, 0.11249624, 0.19867321, 0.30661378, 0.38213542, …
+$ mid_4554  &lt;dbl&gt; 0.02933657, 0.03386947, 0.06300866, 0.11498064, 0.14224209, …
+$ rich_4554 &lt;dbl&gt; 0.02350489, 0.02123280, 0.02791567, 0.04577501, 0.05152510, …</code></pre>
+</div>
+</div>
+<p>data wrangling</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#select the columns that contain the information that we need for plotting, which is year, HS_3544, SC_3544, and BAp_3544</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>edu_div<span class="ot">=</span>rawData<span class="sc">%&gt;%</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">5</span><span class="sc">:</span><span class="dv">7</span>))</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#reshape the dataset, combine all the educational levels under "educational_level" variable and their respective values under "divorce" variable</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>edu_div1<span class="ot">=</span>edu_div<span class="sc">%&gt;%</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gather</span>(<span class="at">key=</span><span class="st">"education_level"</span>,<span class="at">value=</span><span class="st">"divorce"</span>,<span class="dv">2</span><span class="sc">:</span><span class="dv">4</span>)</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>edu_div1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   year education_level    divorce
+1  1960         HS_3544 0.03488887
+2  1970         HS_3544 0.04999984
+3  1980         HS_3544 0.10415128
+4  1990         HS_3544 0.15938095
+5  2000         HS_3544 0.17544616
+6  2001         HS_3544 0.17411604
+7  2002         HS_3544 0.17476931
+8  2003         HS_3544 0.17254483
+9  2004         HS_3544 0.17756455
+10 2005         HS_3544 0.17516353
+11 2006         HS_3544 0.18943673
+12 2007         HS_3544 0.18721641
+13 2008         HS_3544 0.18837663
+14 2009         HS_3544 0.18698758
+15 2010         HS_3544 0.18989580
+16 2011         HS_3544 0.19239892
+17 2012         HS_3544 0.19020633
+18 1960         SC_3544 0.03366938
+19 1970         SC_3544 0.04870549
+20 1980         SC_3544 0.11269947
+21 1990         SC_3544 0.16967005
+22 2000         SC_3544 0.17380324
+23 2001         SC_3544 0.17816906
+24 2002         SC_3544 0.17929419
+25 2003         SC_3544 0.17697536
+26 2004         SC_3544 0.17707955
+27 2005         SC_3544 0.17674265
+28 2006         SC_3544 0.18412098
+29 2007         SC_3544 0.18496086
+30 2008         SC_3544 0.18944998
+31 2009         SC_3544 0.19013626
+32 2010         SC_3544 0.19726945
+33 2011         SC_3544 0.20045883
+34 2012         SC_3544 0.20317649
+35 1960        BAp_3544 0.02751277
+36 1970        BAp_3544 0.04125945
+37 1980        BAp_3544 0.09777208
+38 1990        BAp_3544 0.11495533
+39 2000        BAp_3544 0.10561772
+40 2001        BAp_3544 0.10703886
+41 2002        BAp_3544 0.10344219
+42 2003        BAp_3544 0.10254990
+43 2004        BAp_3544 0.10033665
+44 2005        BAp_3544 0.09948066
+45 2006        BAp_3544 0.10383550
+46 2007        BAp_3544 0.10392942
+47 2008        BAp_3544 0.10201919
+48 2009        BAp_3544 0.10194261
+49 2010        BAp_3544 0.10306385
+50 2011        BAp_3544 0.10776053
+51 2012        BAp_3544 0.10740666</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#remove strings "_3544" since we have already chosen the age groups beforehand, recode the levels to make table more intuitive, And mutate divorce rate to percentage</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>edu_div2<span class="ot">=</span>edu_div1<span class="sc">%&gt;%</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">education_level=</span><span class="fu">str_replace</span>(<span class="at">string=</span>education_level,<span class="at">pattern=</span><span class="st">"_3544"</span>,<span class="at">replacement=</span><span class="st">""</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">education_level=</span><span class="fu">recode</span>(education_level,<span class="st">"HS"</span><span class="ot">=</span><span class="st">"High school or less"</span>,<span class="st">"SC"</span><span class="ot">=</span><span class="st">"Some college"</span>, <span class="st">"BAp"</span><span class="ot">=</span><span class="st">"College graduates"</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">divorce=</span>divorce<span class="sc">*</span><span class="dv">100</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>edu_div2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   year     education_level   divorce
+1  1960 High school or less  3.488887
+2  1970 High school or less  4.999984
+3  1980 High school or less 10.415128
+4  1990 High school or less 15.938095
+5  2000 High school or less 17.544616
+6  2001 High school or less 17.411604
+7  2002 High school or less 17.476931
+8  2003 High school or less 17.254483
+9  2004 High school or less 17.756455
+10 2005 High school or less 17.516353
+11 2006 High school or less 18.943673
+12 2007 High school or less 18.721641
+13 2008 High school or less 18.837663
+14 2009 High school or less 18.698758
+15 2010 High school or less 18.989580
+16 2011 High school or less 19.239892
+17 2012 High school or less 19.020633
+18 1960        Some college  3.366938
+19 1970        Some college  4.870549
+20 1980        Some college 11.269947
+21 1990        Some college 16.967005
+22 2000        Some college 17.380324
+23 2001        Some college 17.816906
+24 2002        Some college 17.929419
+25 2003        Some college 17.697536
+26 2004        Some college 17.707955
+27 2005        Some college 17.674265
+28 2006        Some college 18.412098
+29 2007        Some college 18.496086
+30 2008        Some college 18.944998
+31 2009        Some college 19.013626
+32 2010        Some college 19.726945
+33 2011        Some college 20.045883
+34 2012        Some college 20.317649
+35 1960   College graduates  2.751277
+36 1970   College graduates  4.125945
+37 1980   College graduates  9.777208
+38 1990   College graduates 11.495533
+39 2000   College graduates 10.561772
+40 2001   College graduates 10.703886
+41 2002   College graduates 10.344219
+42 2003   College graduates 10.254990
+43 2004   College graduates 10.033665
+44 2005   College graduates  9.948066
+45 2006   College graduates 10.383550
+46 2007   College graduates 10.392942
+47 2008   College graduates 10.201919
+48 2009   College graduates 10.194261
+49 2010   College graduates 10.306385
+50 2011   College graduates 10.776053
+51 2012   College graduates 10.740666</code></pre>
+</div>
+</div>
+<p>Plotting</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#creating a data frame that will be used for plotting the names of education levels</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>education_level_labels<span class="ot">=</span>edu_div2<span class="sc">%&gt;%</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_wider</span>(<span class="at">names_from=</span><span class="st">"year"</span>,<span class="at">values_from=</span><span class="st">"divorce"</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">nrow=</span><span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>(), <span class="co">#create a new column indicating which row each education level is at</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>         <span class="at">year=</span><span class="fu">if_else</span>(nrow<span class="sc">%%</span><span class="dv">2</span><span class="sc">==</span><span class="dv">0</span>,<span class="st">"1990"</span>,<span class="st">"1980"</span>),<span class="co">#modulus function %% tells you the remainder, if the row is a even number (some college), we will take 1994,otherwise take 1985</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>         <span class="at">divorce=</span><span class="fu">if_else</span>(nrow<span class="sc">%%</span><span class="dv">2</span><span class="sc">==</span><span class="dv">0</span>,<span class="st">`</span><span class="at">1990</span><span class="st">`</span>,<span class="st">`</span><span class="at">1980</span><span class="st">`</span>))<span class="sc">%&gt;%</span> </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(education_level,year,divorce)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>education_level_labels<span class="sc">%&gt;%</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">year=</span><span class="fu">as.numeric</span>(year))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+  education_level      year divorce
+  &lt;chr&gt;               &lt;dbl&gt;   &lt;dbl&gt;
+1 High school or less  1980   10.4 
+2 Some college         1990   17.0 
+3 College graduates    1980    9.78</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#using geom_line</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>edu_div2<span class="sc">%&gt;%</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>year,<span class="at">y=</span>divorce,<span class="at">group=</span>education_level,<span class="at">color=</span>education_level))<span class="sc">+</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_line</span>(<span class="at">size=</span><span class="fl">1.5</span>,<span class="at">show.legend=</span><span class="cn">FALSE</span>)<span class="sc">+</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#geom_text(data=education_level_labels,aes(group=1,label=education_level),show.legend=FALSE)+</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title=</span><span class="st">"Divorce Rates By </span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="st">Education"</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">"Ages 35 to 44"</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">x=</span><span class="cn">NULL</span>,<span class="at">y=</span><span class="cn">NULL</span>)<span class="sc">+</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">1960</span>,<span class="dv">2012</span>,<span class="at">by=</span><span class="dv">10</span>),<span class="at">labels=</span><span class="fu">c</span>(<span class="st">"1960"</span>,<span class="st">"'70"</span>,<span class="st">"'80"</span>,<span class="st">"'90"</span>,<span class="st">"2000"</span>,<span class="st">"'10"</span>))<span class="sc">+</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">breaks=</span><span class="fu">seq</span>(<span class="dv">0</span>,<span class="dv">25</span>,<span class="at">by=</span><span class="dv">5</span>),<span class="at">labels=</span><span class="fu">c</span>(<span class="st">"0"</span>,<span class="st">"5"</span>,<span class="st">"10"</span>,<span class="st">"15"</span>,<span class="st">"20"</span>,<span class="st">"25%"</span>),<span class="at">minor_breaks=</span><span class="cn">NULL</span>)<span class="sc">+</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">breaks=</span><span class="fu">c</span>(<span class="st">"High school or less"</span>,<span class="st">"Some College"</span>,<span class="st">"College graduates"</span>),<span class="at">values=</span><span class="fu">c</span>(<span class="st">"#6699CC"</span>,<span class="st">"#0047AB"</span>,<span class="st">"#89CFF0"</span>))<span class="sc">+</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">16</span>),</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.title=</span><span class="fu">element_textbox_simple</span>(<span class="at">size=</span><span class="dv">16</span>),</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.subtitle=</span><span class="fu">element_textbox_simple</span>(<span class="at">size=</span><span class="dv">12</span>),</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">fill=</span><span class="st">"#ededed"</span>),<span class="co">#change the whole plot background color</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.background=</span><span class="fu">element_rect</span>(<span class="at">fill=</span><span class="st">"#ededed"</span>),<span class="co">#change the panel background color</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color=</span><span class="st">"lightgrey"</span>),</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position=</span><span class="st">"none"</span>,</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.text=</span><span class="fu">element_text</span>(<span class="at">size=</span><span class="dv">12</span>),</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.ticks=</span><span class="fu">element_blank</span>()</span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>        )<span class="sc">+</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">annotate</span>(<span class="st">"text"</span>,<span class="at">x=</span><span class="dv">1</span>, <span class="at">y=</span><span class="dv">1</span>,<span class="at">label=</span><span class="st">"High school or less"</span>)<span class="sc">+</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_fixed</span>(<span class="at">ratio=</span><span class="dv">100</span>)    <span class="co">#control the ratio of y/x coordinate</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="visualization_exercise_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
 
 
 
