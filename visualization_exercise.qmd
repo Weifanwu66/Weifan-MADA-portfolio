@@ -16,13 +16,17 @@ library(ggtext)
 library(tidyverse)
 library(here)
 ```
+
 import data and glimpse data
+
 ```{r}
 dataLocation=here("marriage","divorce.csv")
 rawData=read.csv(dataLocation)
 glimpse(rawData)
 ```
+
 data wrangling
+
 ```{r}
 #select the columns that contain the information that we need for plotting, which is year, HS_3544, SC_3544, and BAp_3544
 edu_div=rawData%>%
@@ -38,7 +42,9 @@ edu_div2=edu_div1%>%
   mutate(divorce=divorce*100)
 edu_div2
 ```
+
 Plotting
+
 ```{r}
 #creating a data frame that will be used for plotting the names of education levels, I eventually used annotation function to create my graph, but I still want to leave this section here
 education_level_labels=edu_div2%>%
@@ -53,7 +59,7 @@ education_level_labels%>%
 
 ```{r}
 #using geom_line
-edu_div2%>%
+plot1=edu_div2%>%
 ggplot(aes(x=year,y=divorce,group=education_level,color=education_level))+
   geom_line(size=1.5,show.legend=FALSE)+
   #geom_text(data=education_level_labels,aes(group=1,label=education_level),show.legend=FALSE)+
@@ -84,9 +90,11 @@ Education",
   annotate("segment",x=2005,xend=2005,y=13,yend=10,color="black",size=0.7)+
   coord_fixed(ratio=2, ylim=c(0,25),xlim=c(1960,2012))    #control the ratio of y/x coordinate, but also specify the limits for y&x axis in case this function overwrite the axis range
 ```
+
 modify the graph using geom_point to indicate the data density, obviously more data was collected from year 2000-2010
+
 ```{r}
-edu_div2%>%
+plot2=edu_div2%>%
 ggplot(aes(x=year,y=divorce,group=education_level,color=education_level))+
   geom_point(size=3,alpha=0.7)+
   geom_line(size=1.5,show.legend=FALSE)+
@@ -116,5 +124,9 @@ Education",
   annotate("segment",x=1995,xend=1995,y=21,yend=17,color="black",size=0.7)+
   annotate("segment",x=2005,xend=2005,y=13,yend=10,color="black",size=0.7)+
   coord_fixed(ratio=2, ylim=c(0,25),xlim=c(1960,2012))    #control the ratio of y/x coordinate, but also specify the limits for y&x axis in case this function overwrite the axis range
+```
+save the plot
+```{r}
+ggsave("plot1.pdf",width=8,height=8,units="cm")
 ```
 
