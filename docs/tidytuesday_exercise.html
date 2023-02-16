@@ -20,6 +20,69 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1.6em;
   vertical-align: middle;
 }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
 </style>
 
 
@@ -144,7 +207,829 @@ ul.task-list li input[type="checkbox"] {
 
 </header>
 
-<p>Placeholder file for the future Tidy Tuesday exercise.</p>
+<p>The data set this week is Hollywood Age Gaps setup</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dlookr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dlookr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following object is masked from 'package:base':
+
+    transform</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2
+──</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>✔ ggplot2 3.4.1     ✔ purrr   1.0.1
+✔ tibble  3.1.8     ✔ dplyr   1.1.0
+✔ tidyr   1.3.0     ✔ stringr 1.5.0
+✔ readr   2.1.3     ✔ forcats 1.0.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ tidyr::extract() masks dlookr::extract()
+✖ dplyr::filter()  masks stats::filter()
+✖ dplyr::lag()     masks stats::lag()</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggstatsplot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You can cite this package as:
+     Patil, I. (2021). Visualizations with statistical details: The 'ggstatsplot' approach.
+     Journal of Open Source Software, 6(61), 3167, doi:10.21105/joss.03167</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggbeeswarm)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>download data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>age_gaps <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-14/age_gaps.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Rows: 1155 Columns: 13
+── Column specification ────────────────────────────────────────────────────────
+Delimiter: ","
+chr  (6): movie_name, director, actor_1_name, actor_2_name, character_1_gend...
+dbl  (5): release_year, age_difference, couple_number, actor_1_age, actor_2_age
+date (2): actor_1_birthdate, actor_2_birthdate
+
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(age_gaps)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 1,155
+Columns: 13
+$ movie_name         &lt;chr&gt; "Harold and Maude", "Venus", "The Quiet American", …
+$ release_year       &lt;dbl&gt; 1971, 2006, 2002, 1998, 2010, 1992, 2009, 1999, 199…
+$ director           &lt;chr&gt; "Hal Ashby", "Roger Michell", "Phillip Noyce", "Joe…
+$ age_difference     &lt;dbl&gt; 52, 50, 49, 45, 43, 42, 40, 39, 38, 38, 36, 36, 35,…
+$ couple_number      &lt;dbl&gt; 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, …
+$ actor_1_name       &lt;chr&gt; "Ruth Gordon", "Peter O'Toole", "Michael Caine", "D…
+$ actor_2_name       &lt;chr&gt; "Bud Cort", "Jodie Whittaker", "Do Thi Hai Yen", "T…
+$ character_1_gender &lt;chr&gt; "woman", "man", "man", "man", "man", "man", "man", …
+$ character_2_gender &lt;chr&gt; "man", "woman", "woman", "woman", "man", "woman", "…
+$ actor_1_birthdate  &lt;date&gt; 1896-10-30, 1932-08-02, 1933-03-14, 1930-09-17, 19…
+$ actor_2_birthdate  &lt;date&gt; 1948-03-29, 1982-06-03, 1982-10-01, 1975-11-08, 19…
+$ actor_1_age        &lt;dbl&gt; 75, 74, 69, 68, 81, 59, 62, 69, 57, 77, 59, 56, 65,…
+$ actor_2_age        &lt;dbl&gt; 23, 24, 20, 23, 38, 17, 22, 30, 19, 39, 23, 20, 30,…</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(age_gaps)  <span class="co">#checking the data structure</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>spc_tbl_ [1,155 × 13] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ movie_name        : chr [1:1155] "Harold and Maude" "Venus" "The Quiet American" "The Big Lebowski" ...
+ $ release_year      : num [1:1155] 1971 2006 2002 1998 2010 ...
+ $ director          : chr [1:1155] "Hal Ashby" "Roger Michell" "Phillip Noyce" "Joel Coen" ...
+ $ age_difference    : num [1:1155] 52 50 49 45 43 42 40 39 38 38 ...
+ $ couple_number     : num [1:1155] 1 1 1 1 1 1 1 1 1 1 ...
+ $ actor_1_name      : chr [1:1155] "Ruth Gordon" "Peter O'Toole" "Michael Caine" "David Huddleston" ...
+ $ actor_2_name      : chr [1:1155] "Bud Cort" "Jodie Whittaker" "Do Thi Hai Yen" "Tara Reid" ...
+ $ character_1_gender: chr [1:1155] "woman" "man" "man" "man" ...
+ $ character_2_gender: chr [1:1155] "man" "woman" "woman" "woman" ...
+ $ actor_1_birthdate : Date[1:1155], format: "1896-10-30" "1932-08-02" ...
+ $ actor_2_birthdate : Date[1:1155], format: "1948-03-29" "1982-06-03" ...
+ $ actor_1_age       : num [1:1155] 75 74 69 68 81 59 62 69 57 77 ...
+ $ actor_2_age       : num [1:1155] 23 24 20 23 38 17 22 30 19 39 ...
+ - attr(*, "spec")=
+  .. cols(
+  ..   movie_name = col_character(),
+  ..   release_year = col_double(),
+  ..   director = col_character(),
+  ..   age_difference = col_double(),
+  ..   couple_number = col_double(),
+  ..   actor_1_name = col_character(),
+  ..   actor_2_name = col_character(),
+  ..   character_1_gender = col_character(),
+  ..   character_2_gender = col_character(),
+  ..   actor_1_birthdate = col_date(format = ""),
+  ..   actor_2_birthdate = col_date(format = ""),
+  ..   actor_1_age = col_double(),
+  ..   actor_2_age = col_double()
+  .. )
+ - attr(*, "problems")=&lt;externalptr&gt; </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(age_gaps) <span class="co">#checking missing values and some descriptive stats</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+
+<table style="width: auto;" class="table table-condensed">
+<caption>
+Data summary
+</caption>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Name
+</td>
+<td style="text-align:left;">
+age_gaps
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Number of rows
+</td>
+<td style="text-align:left;">
+1155
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Number of columns
+</td>
+<td style="text-align:left;">
+13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+_______________________
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Column type frequency:
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+character
+</td>
+<td style="text-align:left;">
+6
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Date
+</td>
+<td style="text-align:left;">
+2
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+numeric
+</td>
+<td style="text-align:left;">
+5
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+________________________
+</td>
+<td style="text-align:left;">
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Group variables
+</td>
+<td style="text-align:left;">
+None
+</td>
+</tr>
+</tbody>
+
+</table>
+<p><strong>Variable type: character</strong></p>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:right;">
+min
+</th>
+<th style="text-align:right;">
+max
+</th>
+<th style="text-align:right;">
+empty
+</th>
+<th style="text-align:right;">
+n_unique
+</th>
+<th style="text-align:right;">
+whitespace
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+movie_name
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+43
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+830
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+director
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+31
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+510
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+actor_1_name
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+6
+</td>
+<td style="text-align:right;">
+22
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+567
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+actor_2_name
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:right;">
+27
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+647
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+character_1_gender
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+character_2_gender
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+3
+</td>
+<td style="text-align:right;">
+5
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+0
+</td>
+</tr>
+</tbody>
+
+</table>
+<p><strong>Variable type: Date</strong></p>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:left;">
+min
+</th>
+<th style="text-align:left;">
+max
+</th>
+<th style="text-align:left;">
+median
+</th>
+<th style="text-align:right;">
+n_unique
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+actor_1_birthdate
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+1889-04-16
+</td>
+<td style="text-align:left;">
+1996-06-01
+</td>
+<td style="text-align:left;">
+1964-10-03
+</td>
+<td style="text-align:right;">
+562
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+actor_2_birthdate
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:left;">
+1906-10-06
+</td>
+<td style="text-align:left;">
+1996-11-11
+</td>
+<td style="text-align:left;">
+1974-07-30
+</td>
+<td style="text-align:right;">
+640
+</td>
+</tr>
+</tbody>
+
+</table>
+<p><strong>Variable type: numeric</strong></p>
+
+<table>
+<thead>
+<tr>
+<th style="text-align:left;">
+skim_variable
+</th>
+<th style="text-align:right;">
+n_missing
+</th>
+<th style="text-align:right;">
+complete_rate
+</th>
+<th style="text-align:right;">
+mean
+</th>
+<th style="text-align:right;">
+sd
+</th>
+<th style="text-align:right;">
+p0
+</th>
+<th style="text-align:right;">
+p25
+</th>
+<th style="text-align:right;">
+p50
+</th>
+<th style="text-align:right;">
+p75
+</th>
+<th style="text-align:right;">
+p100
+</th>
+<th style="text-align:left;">
+hist
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+release_year
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2000.80
+</td>
+<td style="text-align:right;">
+16.37
+</td>
+<td style="text-align:right;">
+1935
+</td>
+<td style="text-align:right;">
+1997
+</td>
+<td style="text-align:right;">
+2004
+</td>
+<td style="text-align:right;">
+2012
+</td>
+<td style="text-align:right;">
+2022
+</td>
+<td style="text-align:left;">
+▁▁▁▆▇
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+age_difference
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+10.42
+</td>
+<td style="text-align:right;">
+8.51
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+4
+</td>
+<td style="text-align:right;">
+8
+</td>
+<td style="text-align:right;">
+15
+</td>
+<td style="text-align:right;">
+52
+</td>
+<td style="text-align:left;">
+▇▃▂▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+couple_number
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1.40
+</td>
+<td style="text-align:right;">
+0.75
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+7
+</td>
+<td style="text-align:left;">
+▇▁▁▁▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+actor_1_age
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+40.64
+</td>
+<td style="text-align:right;">
+10.42
+</td>
+<td style="text-align:right;">
+18
+</td>
+<td style="text-align:right;">
+33
+</td>
+<td style="text-align:right;">
+39
+</td>
+<td style="text-align:right;">
+47
+</td>
+<td style="text-align:right;">
+81
+</td>
+<td style="text-align:left;">
+▂▇▅▂▁
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+actor_2_age
+</td>
+<td style="text-align:right;">
+0
+</td>
+<td style="text-align:right;">
+1
+</td>
+<td style="text-align:right;">
+30.21
+</td>
+<td style="text-align:right;">
+7.50
+</td>
+<td style="text-align:right;">
+17
+</td>
+<td style="text-align:right;">
+25
+</td>
+<td style="text-align:right;">
+29
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+68
+</td>
+<td style="text-align:left;">
+▇▇▂▁▁
+</td>
+</tr>
+</tbody>
+
+</table>
+</div>
+</div>
+<p>After looking at the variables, the interesting questions I could think of include 1.Is there any pattern of age difference throughout the years (e.g.&nbsp;increasing age difference as time goes by)? 2. Are males always older than females as Hollywood couples? 3. Is there any same-gender couple with age difference? 4. Is age difference associated with directors (preference). 5. Which actors (actresses) always play characters who are involved in romantic relationships with age gap? Since the column names are clean, the data structure seems correct, and there is no missing value, it seems like the author who cleaned this data did a good job. We can start to explore some data For now, let’s try to answer the first by selecting the related variables exploratory data analysis report</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co">#first, let's explore age difference by years</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatterstats</span>(<span class="at">data=</span>age_gaps,<span class="at">x=</span>release_year,<span class="at">y=</span>age_difference,<span class="at">type=</span><span class="st">"np"</span>) <span class="co">#it seems like as time goes by, the age gap significantly decreases, let see if there are difference between genders (male is older v.s. female is older)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Registered S3 method overwritten by 'ggside':
+  method from   
+  +.gg   ggplot2</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="tidytuesday_exercise_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">grouped_ggscatterstats</span>(</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">data=</span>age_gaps,<span class="at">x=</span>release_year,<span class="at">y=</span>age_difference,<span class="at">grouping.var=</span>character_1_gender,<span class="at">type=</span><span class="st">"np"</span>) <span class="co">#from this plot, we can clearly see that the number of older males are way more than that of female in relationships with age gaps. Also, the age difference is significantly reduced as time goes by in relationships when males are older, but it's not significant in the relationships when females are older.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="tidytuesday_exercise_files/figure-html/unnamed-chunk-3-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>We found that there are more elder males than elder females in relationships throughout the years, even though the age difference has significantly reduced for relationships with older males. However, are there any same sex couples?</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>male_couple<span class="ot">=</span>age_gaps<span class="sc">%&gt;%</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(character_1_gender<span class="sc">==</span><span class="st">"man"</span>,character_2_gender<span class="sc">==</span><span class="st">"man"</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>female_couple<span class="ot">=</span>age_gaps<span class="sc">%&gt;%</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(character_1_gender<span class="sc">==</span><span class="st">"woman"</span>,character_2_gender<span class="sc">==</span><span class="st">"woman"</span>)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>male_couple</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 12 × 13
+   movie_name    relea…¹ direc…² age_d…³ coupl…⁴ actor…⁵ actor…⁶ chara…⁷ chara…⁸
+   &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+ 1 Beginners        2010 Mike M…      43       1 Christ… Goran … man     man    
+ 2 A Single Man     2009 Tom Fo…      29       1 Colin … Nichol… man     man    
+ 3 Behind the C…    2013 Steven…      26       1 Michae… Matt D… man     man    
+ 4 A Single Man     2009 Tom Fo…      18       2 Colin … Matthe… man     man    
+ 5 Milk             2008 Gus Va…      18       1 Sean P… James … man     man    
+ 6 Rock of Ages     2012 Adam S…      17       1 Alec B… Russel… man     man    
+ 7 The Normal H…    2014 Ryan M…      10       1 Mark R… Matt B… man     man    
+ 8 Call Me by Y…    2017 Luca G…       9       1 Armie … Timoth… man     man    
+ 9 I Love You P…    2009 Glenn …       9       1 Jim Ca… Ewan M… man     man    
+10 Boogie Nights    1997 Paul T…       4       3 Philip… Mark W… man     man    
+11 Brokeback Mo…    2005 Ang Lee       1       2 Heath … Jake G… man     man    
+12 The Family S…    2007 Thomas…       1       6 Brian … Tyrone… man     man    
+# … with 4 more variables: actor_1_birthdate &lt;date&gt;, actor_2_birthdate &lt;date&gt;,
+#   actor_1_age &lt;dbl&gt;, actor_2_age &lt;dbl&gt;, and abbreviated variable names
+#   ¹​release_year, ²​director, ³​age_difference, ⁴​couple_number, ⁵​actor_1_name,
+#   ⁶​actor_2_name, ⁷​character_1_gender, ⁸​character_2_gender</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>female_couple</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 11 × 13
+   movie_name    relea…¹ direc…² age_d…³ coupl…⁴ actor…⁵ actor…⁶ chara…⁷ chara…⁸
+   &lt;chr&gt;           &lt;dbl&gt; &lt;chr&gt;     &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+ 1 Freeheld         2015 Peter …      27       1 Julian… Elliot… woman   woman  
+ 2 Chloe            2009 Atom E…      25       1 Julian… Amanda… woman   woman  
+ 3 Carol            2015 Todd H…      16       1 Cate B… Rooney… woman   woman  
+ 4 The Favourite    2018 Yorgos…      14       1 Olivia… Emma S… woman   woman  
+ 5 In the Heigh…    2021 John M…      12       1 Daphne… Stepha… woman   woman  
+ 6 Blue Is The …    2013 Abdell…       8       1 Léa Se… Adèle … woman   woman  
+ 7 Monster          2003 Patty …       5       1 Charli… Christ… woman   woman  
+ 8 Professor Ma…    2017 Angela…       5       2 Rebecc… Bella … woman   woman  
+ 9 The Favourite    2018 Yorgos…       4       3 Rachel… Olivia… woman   woman  
+10 Imagine Me &amp;…    2005 Ol Par…       3       1 Lena H… Piper … woman   woman  
+11 The Kids Are…    2010 Lisa C…       2       2 Annett… Julian… woman   woman  
+# … with 4 more variables: actor_1_birthdate &lt;date&gt;, actor_2_birthdate &lt;date&gt;,
+#   actor_1_age &lt;dbl&gt;, actor_2_age &lt;dbl&gt;, and abbreviated variable names
+#   ¹​release_year, ²​director, ³​age_difference, ⁴​couple_number, ⁵​actor_1_name,
+#   ⁶​actor_2_name, ⁷​character_1_gender, ⁸​character_2_gender</code></pre>
+</div>
+</div>
+<p>So we did find same sex couples, let’s see if there are any interesting pattern for them</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatterstats</span>(<span class="at">data=</span>male_couple,<span class="at">x=</span>release_year,<span class="at">y=</span>age_difference,<span class="at">type=</span><span class="st">"np"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="tidytuesday_exercise_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggscatterstats</span>(<span class="at">data=</span>female_couple,<span class="at">x=</span>release_year,<span class="at">y=</span>age_difference,<span class="at">type=</span><span class="st">"np"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="tidytuesday_exercise_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Interestingly, for same sex couples, the age difference slightly increase (p&gt;0.05) throughout the years. Even though, it appeared on the screen fairly recently (after 1997) and the sample size is really small. Let’s see if there’s any director who has directed multiple movies with big-age-difference romantic relationships (over 20 years).</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>director_pref<span class="ot">=</span>age_gaps<span class="sc">%&gt;%</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(director,age_difference)<span class="sc">%&gt;%</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(age_difference<span class="sc">&gt;</span><span class="dv">20</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">count</span>(director)<span class="sc">%&gt;%</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n<span class="sc">&gt;</span><span class="dv">1</span>)<span class="sc">%&gt;%</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(n))</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>director_pref</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 21 × 2
+   director             n
+   &lt;chr&gt;            &lt;int&gt;
+ 1 Woody Allen          9
+ 2 John Glen            8
+ 3 Alfred Hitchcock     5
+ 4 Guy Hamilton         4
+ 5 Howard Hawks         3
+ 6 John Huston          3
+ 7 Adrian Lyne          2
+ 8 Charlie Chaplin      2
+ 9 Eli Roth             2
+10 Joel Coen            2
+# … with 11 more rows</code></pre>
+</div>
+</div>
+<p>So, out of over a thousand movies, there are 21 directors who like to direct movies with romantic relationships of over 20-year age difference more than once. Woody Allen ranked No.1 Let’s look into details</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>director_chara<span class="ot">=</span><span class="fu">semi_join</span>(age_gaps,director_pref,<span class="at">by=</span><span class="st">"director"</span>)</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>plot<span class="ot">=</span>director_chara<span class="sc">%&gt;%</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>director,<span class="at">y=</span>age_difference,<span class="at">color=</span>character_1_gender))<span class="sc">+</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_boxplot</span>(<span class="at">varwidth=</span><span class="cn">TRUE</span>,<span class="at">lwd=</span><span class="fl">0.6</span>,<span class="at">color=</span><span class="st">"gray"</span>)<span class="sc">+</span></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_quasirandom</span>(<span class="at">width=</span><span class="fl">0.5</span>,<span class="at">varwidth=</span><span class="cn">TRUE</span>,<span class="at">size=</span><span class="dv">3</span>,<span class="at">alpha=</span><span class="fl">0.2</span>)<span class="sc">+</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stat_summary</span>(<span class="at">fun=</span>median,<span class="at">fun.min=</span>median,<span class="at">fun.max=</span>median,<span class="at">geom=</span><span class="st">"crossbar"</span>,<span class="at">width=</span><span class="fl">0.2</span>,<span class="at">size=</span><span class="fl">1.8</span>,<span class="at">fatten=</span><span class="dv">1</span>,<span class="at">color=</span><span class="st">"red"</span>)<span class="sc">+</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_discrete</span>(<span class="at">guide =</span> <span class="fu">guide_axis</span>(<span class="at">n.dodge=</span><span class="dv">2</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Using `size` aesthetic for lines was deprecated in ggplot2 3.4.0.
+ℹ Please use `linewidth` instead.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="tidytuesday_exercise_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="1728"></p>
+</div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="st">"plot.pdf"</span>, <span class="at">width =</span> <span class="dv">18</span>, <span class="at">height =</span> <span class="dv">10</span>, <span class="at">units =</span> <span class="st">"in"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Roger Michell</p>
 
 
 

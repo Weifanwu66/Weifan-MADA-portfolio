@@ -1,0 +1,133 @@
+---
+title: "Tidy Tuesday Exercise"
+output: 
+  html_document:
+    toc: FALSE
+---
+
+
+The data set this week is Hollywood Age Gaps
+setup
+
+```{r}
+library(skimr)
+library(plotly)
+library(tidyverse)
+library(ggstatsplot)
+library(ggbeeswarm)
+library(ggtext)
+library(broom)
+```
+
+
+download data
+
+```{r}
+age_gaps <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-02-14/age_gaps.csv')
+glimpse(age_gaps)
+str(age_gaps)  #checking the data structure
+skim(age_gaps) #checking missing values and some descriptive stats
+```
+
+After looking at the variables, the interesting questions I could think of include 1.Is there any pattern of age difference throughout the years (e.g. increasing age difference as time goes by)? 2. Are males always older than females as Hollywood couples? 3. Is there any same-gender couple with age difference? 4. Is age difference associated with directors (preference). 5. Which actors (actresses) always play characters who are involved in romantic relationships with age gap?
+Since the column names are clean, the data structure seems correct, and there is no missing value, it seems like the author who cleaned this data did a good job. We can start to explore some data
+For now, let's try to answer the first by selecting the related variables
+exploratory data analysis report
+
+```{r}
+#first, let's explore age difference by years
+ggscatterstats(data=age_gaps,x=release_year,y=age_difference,type="np") #it seems like as time goes by, the age gap significantly decreases, let see if there are difference between genders (male is older v.s. female is older)
+grouped_ggscatterstats(
+  data=age_gaps,x=release_year,y=age_difference,grouping.var=character_1_gender,type="np") #from this plot, we can clearly see that the number of older males are way more than that of female in relationships with age gaps. Also, the age difference is significantly reduced as time goes by in relationships when males are older, but it's not significant in the relationships when females are older.
+```
+
+We found that there are more elder males than elder females in relationships throughout the years, even though the age difference has significantly reduced for relationships with older males. However, are there any same sex couples?
+
+```{r}
+male_couple=age_gaps%>%
+  filter(character_1_gender=="man",character_2_gender=="man")
+
+female_couple=age_gaps%>%
+  filter(character_1_gender=="woman",character_2_gender=="woman")
+male_couple
+female_couple
+
+```
+
+
+So we did find same sex couples, let's see if there are any interesting pattern for them
+
+```{r}
+ggscatterstats(data=male_couple,x=release_year,y=age_difference,type="np")
+ggscatterstats(data=female_couple,x=release_year,y=age_difference,type="np")
+```
+
+Interestingly, for same sex couples, the age difference slightly increase (p>0.05) throughout the years. Even though, it appeared on the screen fairly recently (after 1997) and the sample size is really small. Let's see if there's any director who has directed multiple movies with big-age-difference romantic relationships (over 20 years).
+
+```{r}
+director_pref=age_gaps%>%
+  select(director,age_difference)%>%
+  filter(age_difference>20)%>%
+  count(director)%>%
+  filter(n>1)%>%
+  arrange(desc(n))
+director_pref
+```
+
+So, out of over a thousand movies, there are 21 directors who like to direct movies with romantic relationships of over 20-year age difference more than once. Woody Allen ranked No.1 Let's look into details, the points above y=20
+
+```{r fig.width=18, fig.height=10}
+#get all the information that we need for these 21 directors from age_gaps
+director_chara=inner_join(age_gaps,director_pref,by="director")
+
+  
+plot=director_chara%>%
+  ggplot(aes(x=director,y=age_difference,color=character_1_gender))+
+  geom_boxplot(varwidth=TRUE,lwd=0.6,color="gray")+
+  geom_quasirandom(width=0.5,varwidth=TRUE,size=3)+
+  stat_summary(fun=median,fun.min=median,fun.max=median,geom="crossbar",width=0.2,linewidth=1.8,fatten=1,color="red")+
+  theme(text=element_text(size=22))+
+  guides(color = guide_legend(title = "gender of the older actor"))+
+  scale_x_discrete(guide = guide_axis(n.dodge=3))+
+  geom_hline(yintercept=20)
+plot
+ggsave("plot.pdf", width = 18, height = 10, units = "in")
+```
+
+Roger Michell directed the movie that included romantic relationship with the largest age-gap. All the directors directed more movies with elder males, which is in accordance with the overall result. 
+Let's explore if there is any actors (actress) who always play roles involved in this type of relationship
+
+```{r}
+actor_older=age_gaps%>%
+  select(actor_1_name,age_difference)%>%
+  filter(age_difference>20)%>%
+  count(actor_1_name)%>%
+  filter(n>2)%>%
+  arrange(desc(n))
+actor_younger=age_gaps%>%
+  select(actor_2_name,age_difference)%>%
+  filter(age_difference>20)%>%
+  count(actor_2_name)%>%
+  filter(n>1)%>%
+  arrange(desc(n))
+actor_older
+actor_younger
+
+```
+
+From the tables, we can see Roger Moore has played an older man in a relationship for 12 times, Audrey Hepburn played a younger female for 5 times.Let's see the age of each actors when they played the role
+
+Finally, let's dive into making some interactive plots, I want to plot the age of younger actor on y axis and the age of the older actor of the couple on x-axis. Since the numbers on x axis are older, the points should fall under y=x.The label include the movies' names
+
+```{r}
+
+age_gaps%>%
+ ggplot(aes(x=actor_1_age,y=actor_2_age,text=movie_name,color=character_1_gender))+
+  geom_point()+
+  geom_abline(intercept =0,slope=1)+
+  theme_bw()+
+  labs(title="The age difference in each movie group by the gender of the older actor",x="the age of the older actor",y="age of the younger actor")+
+  guides(color = guide_legend(title = "gender of the older actor"))
+ggplotly()
+```
+
