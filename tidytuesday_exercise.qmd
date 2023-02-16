@@ -14,7 +14,6 @@ library(tidyverse)
 library(ggstatsplot)
 library(ggbeeswarm)
 library(ggtext)
-library(broom)
 ```
 
 download data
@@ -25,16 +24,18 @@ str(age_gaps)  #checking the data structure
 skim(age_gaps) #checking missing values and some descriptive stats
 ```
 After looking at the variables, the interesting questions I could think of include 1.Is there any pattern of age difference throughout the years (e.g. increasing age difference as time goes by)? 2. Are males always older than females as Hollywood couples? 3. Is there any same-gender couple with age difference? 4. Is age difference associated with directors (preference). 5. Which actors (actresses) always play characters who are involved in romantic relationships with age gap?
-Since the column names are clean, the data structure seems correct, and there is no missing value, it seems like the author who cleaned this data did a good job. We can start to explore some data
-For now, let's try to answer the first by selecting the related variables
+Since the column names are clean, the data structure seems correct, and there is no missing value, it seems like the author who cleaned this data did a good job. We can start to explore some data.
 exploratory data analysis report
 ```{r}
 #first, let's explore age difference by years
-ggscatterstats(data=age_gaps,x=release_year,y=age_difference,type="np") #it seems like as time goes by, the age gap significantly decreases, let see if there are difference between genders (male is older v.s. female is older)
+ggscatterstats(data=age_gaps,x=release_year,y=age_difference,type="np")
+#it seems like as time goes by, the age gap significantly decreases, let see if there are difference between genders (male is older v.s. female is older)
 grouped_ggscatterstats(
-  data=age_gaps,x=release_year,y=age_difference,grouping.var=character_1_gender,type="np") #from this plot, we can clearly see that the number of older males are way more than that of female in relationships with age gaps. Also, the age difference is significantly reduced as time goes by in relationships when males are older, but it's not significant in the relationships when females are older.
+  data=age_gaps,x=release_year,y=age_difference,grouping.var=character_1_gender,type="np",
+  caption.text="change of age difference in a relationship thoughout years group by the gender of the older actor")
+#from this plot, we can clearly see that the number of older males are way more than that of female in relationships with age gaps. Also, the age difference is significantly reduced as time goes by in relationships when males are older, but it's not significant in the relationships when females are older.
 ```
-We found that there are more elder males than elder females in relationships throughout the years, even though the age difference has significantly reduced for relationships with older males. However, are there any same sex couples?
+There are more relationships with older males than older females throughout the years, even though the age difference has significantly reduced for relationships with older males. However, is there any same sex couple? Will there be any similar pattern for the same sex couples?
 ```{r}
 male_couple=age_gaps%>%
   filter(character_1_gender=="man",character_2_gender=="man")
@@ -43,7 +44,6 @@ female_couple=age_gaps%>%
   filter(character_1_gender=="woman",character_2_gender=="woman")
 male_couple
 female_couple
-
 ```
 
 So we did find same sex couples, let's see if there are any interesting pattern for them
@@ -51,7 +51,7 @@ So we did find same sex couples, let's see if there are any interesting pattern 
 ggscatterstats(data=male_couple,x=release_year,y=age_difference,type="np")
 ggscatterstats(data=female_couple,x=release_year,y=age_difference,type="np")
 ```
-Interestingly, for same sex couples, the age difference slightly increase (p>0.05) throughout the years. Even though, it appeared on the screen fairly recently (after 1997) and the sample size is really small. Let's see if there's any director who has directed multiple movies with big-age-difference romantic relationships (over 20 years).
+Interestingly, for same sex couples, the age difference has slightly increased (p>0.05) throughout the years. Even though, it appeared on the screen fairly recently (after 1997) and the sample size is really small. Let's see if there's any director who has directed multiple movies with big-age-difference romantic relationships (over 20 years).
 ```{r}
 director_pref=age_gaps%>%
   select(director,age_difference)%>%
@@ -61,7 +61,7 @@ director_pref=age_gaps%>%
   arrange(desc(n))
 director_pref
 ```
-So, out of over a thousand movies, there are 21 directors who like to direct movies with romantic relationships of over 20-year age difference more than once. Woody Allen ranked No.1 Let's look into details, the points above y=20
+So, out of over a thousand movies, there are 21 directors who like to direct movies with romantic relationships of over 20-year age difference more than once. Woody Allen ranked No.1 Let's look into details.
 ```{r fig.width=18, fig.height=10}
 #get all the information that we need for these 21 directors from age_gaps
 director_chara=inner_join(age_gaps,director_pref,by="director")
@@ -100,7 +100,7 @@ actor_younger
 ```
 From the tables, we can see Roger Moore has played an older man in a relationship for 12 times, Audrey Hepburn played a younger female for 5 times.Let's see the age of each actors when they played the role
 
-Finally, let's dive into making some interactive plots, I want to plot the age of younger actor on y axis and the age of the older actor of the couple on x-axis. Since the numbers on x axis are older, the points should fall under y=x.The label include the movies' names
+Finally, let's dive into making some interactive plots, I want to plot the age of younger actor on y axis and the age of the older actor of the couple on x-axis. Since the numbers on x axis are older, the points should fall under y=x. The label include the name of each movie.
 ```{r}
 
 age_gaps%>%
