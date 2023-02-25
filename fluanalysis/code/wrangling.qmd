@@ -1,0 +1,36 @@
+---
+title: "wrangling"
+author: "Weifan Wu"
+editor: visual
+output:html_document
+date:"02/25/2023"
+---
+#Load Library
+```{r}
+library(tidyverse)
+library(skimr)
+library(here)
+```
+#Load Data and Check Data
+```{r}
+data_location=here("fluanalysis","data","SympAct_Any_Pos.Rda")
+rawdata=readRDS("SympAct_Any_Pos.Rda",file=data_location)
+head(rawdata)
+skim(rawdata)
+```
+#Clean Data
+```{r}
+#remove columns containing certain strings and drop NA values
+d1=rawdata%>%
+  select(!contains(c("Activity","Score","DXname","Total","FluB","FluA","unique"),ignore.case = TRUE))%>%
+  drop_na()
+skim(d1)
+```
+#Save Data
+```{r}
+processeddata=d1
+data_location=here("fluanalysis","data","processeddata.rds")
+saveRDS("processeddata.rds",file=data_location)
+```
+
+

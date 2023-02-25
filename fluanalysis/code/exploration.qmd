@@ -6,7 +6,8 @@ output:html_document
 date:"02/25/2023"
 ---
 
-##EDA #Main continous outcome of interest is `Body Temperature`, and main categorical outcome is `Nausea` #Load Library install.packages("DataExplorer")
+##EDA
+#Main continous outcome of interest is `Body Temperature`, and main categorical outcome is `Nausea` #Load Library install.packages("DataExplorer")
 
 ```{r}
 library(tidyverse)
