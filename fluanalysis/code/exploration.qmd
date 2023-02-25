@@ -1,0 +1,56 @@
+---
+title: "EDA"
+author: "Weifan Wu"
+editor: visual
+output:html_document
+date:"02/25/2023"
+---
+
+##EDA #Main continous outcome of interest is `Body Temperature`, and main categorical outcome is `Nausea` #Load Library install.packages("DataExplorer")
+
+```{r}
+library(tidyverse)
+library(here)
+library(skimr)
+library(tidymodels)
+library(gtsummary)
+library(ggstatsplot)
+library(DataExplorer)
+```
+
+#Load Data
+
+```{r}
+data_location=here("fluanalysis","data","processeddata.rds")
+exp_data=readRDS("processeddata.rds",file=data_location)
+```
+
+#Check Data
+
+```{r}
+skim(exp_data)
+```
+
+#Get Summary Tables
+
+```{r}
+#Get Summary Table for exp_data, grouped by Nausea
+tbl_summary(exp_data,by=Nausea)
+```
+
+#Histogram and Density plot for for Body Temperature
+
+```{r}
+plot_histogram(exp_data)
+plot_density(exp_data)
+```
+
+#It appears that the Body Temperature is right skewed, which is expected. However, let's check for outliers
+
+#The predictors that I choose include: Vomitting, Diarrhea, Weakness, Insomnia, and RunnyNose
+
+```{r}
+#Headache VS 
+#Nausea VS a Diarrhea
+ggbarstats(data=exp_data,x=Nausea,y=Diarrhea,label="both")
+```
