@@ -5,20 +5,26 @@ editor: visual
 output:html_document
 date:"02/25/2023"
 ---
+
 #Load Library
+
 ```{r}
 library(tidyverse)
 library(skimr)
 library(here)
 ```
+
 #Load Data and Check Data
+
 ```{r}
 data_location=here("fluanalysis","data","SympAct_Any_Pos.Rda")
 rawdata=readRDS("SympAct_Any_Pos.Rda",file=data_location)
 head(rawdata)
 skim(rawdata)
 ```
+
 #Clean Data
+
 ```{r}
 #remove columns containing certain strings and drop NA values
 d1=rawdata%>%
@@ -26,11 +32,11 @@ d1=rawdata%>%
   drop_na()
 skim(d1)
 ```
+
 #Save Data
+
 ```{r}
-processeddata=d1
-data_location=here("fluanalysis","data","processeddata.rds")
-saveRDS("processeddata.rds",file=data_location)
+processed_data=d1
+data_location1=here("fluanalysis","data","processed_data.rds")
+saveRDS("processed_data.rds",file=data_location1)
 ```
-
-

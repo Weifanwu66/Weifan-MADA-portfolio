@@ -1,0 +1,30 @@
+---
+title: "Fitting"
+author: "WeifaN Wu"
+editor: visual
+output:html_document
+date:"02/25/2023"
+---
+#Main continous outcome of interest is `Body Temperature`, and main categorical outcome is `Nausea` #Load Library 
+```{r}
+library(tidyverse)
+library(here)
+library(skimr)
+library(tidymodels)
+```
+
+#Load Data
+
+```{r}
+data_location=here::here("fluanalysis","data","processed_data.rds")
+exp_data=readRDS("processed_data.rds",file=data_location)
+exp_data
+```
+
+#Check Data
+
+```{r}
+head(exp_data)
+skim(exp_data)
+view(exp_data)
+```
