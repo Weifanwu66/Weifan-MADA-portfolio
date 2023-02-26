@@ -12,19 +12,17 @@ date:"02/25/2023"
 library(tidyverse)
 library(here)
 library(skimr)
-library(tidymodels)
 library(gtsummary)
 library(ggstatsplot)
-library(DataExplorer)
 library(ggbeeswarm)
 ```
 
 #Load Data
 
 ```{r}
-setwd("C:/Users/weifa/OneDrive/Documents/GitKraken/MADA/data analysis/Weifan-MADA-portfolio")
-data_location=here("fluanalysis","data","processeddata.rds")
-readRDS("processeddata.rds",file=data_location)
+data_location2=here("data","processed_data.rds")
+
+exp_data=readRDS(file=data_location2)
 ```
 
 #Check Data

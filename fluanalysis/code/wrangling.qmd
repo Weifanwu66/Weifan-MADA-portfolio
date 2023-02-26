@@ -17,7 +17,7 @@ library(here)
 #Load Data and Check Data
 
 ```{r}
-data_location=here("fluanalysis","data","SympAct_Any_Pos.Rda")
+data_location=here("data","SympAct_Any_Pos.Rda")
 rawdata=readRDS("SympAct_Any_Pos.Rda",file=data_location)
 head(rawdata)
 skim(rawdata)
@@ -37,6 +37,7 @@ skim(d1)
 
 ```{r}
 processed_data=d1
-data_location1=here("fluanalysis","data","processed_data.rds")
-saveRDS("processed_data.rds",file=data_location1)
+processed_data
+data_location1=here("data","processed_data.rds")
+saveRDS("processed_data.rds",file=data_location1) 
 ```
