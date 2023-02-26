@@ -5,12 +5,16 @@ editor: visual
 output:html_document
 date:"02/25/2023"
 ---
-#Main continous outcome of interest is `Body Temperature`, and main categorical outcome is `Nausea` #Load Library 
+
+#Main continous outcome of interest is `Body Temperature`, and main categorical outcome is `Nausea` #Load Library
+
 ```{r}
 library(tidyverse)
 library(here)
 library(skimr)
 library(tidymodels)
+library(dotwhisker)
+library(glmnet)
 ```
 
 #Load Data
@@ -27,4 +31,194 @@ exp_data
 head(exp_data)
 skim(exp_data)
 view(exp_data)
+#Drop Unnecessary variables
+mod_data=exp_data%>%
+  select(c("ChillsSweats", "Vomit", "Weakness", "ChestPain", "RunnyNose","BodyTemp","Nausea"))
+mod_data
 ```
+##Fitting models
+#Predicting `BodyTemp` using `RunnyRose`
+```{r}
+#set an engine for linear regression model
+linear_reg()%>%set_engine("lm")%>%set_mode("regression")
+#save it as lm_mod
+lm_mod=linear_reg()
+#model estimated using fit () function
+lm_fit=lm_mod%>%
+  fit(BodyTemp~RunnyNose,data=mod_data)
+#checking the parameter estimates
+tidy(lm_fit)
+#plot a dot whisker
+tidy(lm_fit)%>%
+  dwplot(dot_args=list(size=2,color="black"),
+         whisker_args=list(color="black"),
+         vline=geom_vline(xintercept=0,color="grey50",linetype=2))
+```
+ Model `BodyTemp`based on `RunnyNose`
+```{r}
+set.seed(123)
+Temp_split=initial_split(mod_data,strata = BodyTemp)
+Temp_train=training(Temp_split)
+Temp_test=testing(Temp_split)
+#cross valdiation
+set.seed(234)
+Temp_folds=vfold_cv(Temp_train,strata=BodyTemp)
+#set an engine for linear regression model
+lm_spec=linear_reg()%>%set_engine("lm")%>%set_mode("regression")
+#building model using recipe
+rec_Temp=recipe(BodyTemp~RunnyNose,data=Temp_train)
+wf_Temp=workflow(rec_Temp,lm_spec)
+#resampling
+doParallel::registerDoParallel()
+ctrl_preds=control_resamples(save_pred = TRUE)
+rs_Temp=fit_resamples(wf_Temp,Temp_folds,control=ctrl_preds)
+linear_pred=augment(rs_Temp)
+#checking the sensitivity
+rs_Temp_metrics <- linear_pred %>% 
+                     metrics(truth = !!sym("BodyTemp"), estimate = .pred)
+t1=rs_Temp_metrics%>%
+  rename("RunnyNose.estimate"=".estimate")
+
+
+```
+
+#Model `BodyTemp` based on all predictors: ChillsSweats, Vomit, Weakness, ChestPain, and RunnyNose
+```{r}
+#set an engine for linear regression model
+linear_reg()%>%set_engine("keras")
+#save it as lm_mod
+lm_mod=linear_reg()
+#model estimaed using fit () function
+lm_fit2=lm_mod%>%
+  fit(BodyTemp~RunnyNose+ChillsSweats+Vomit+Weakness+ChestPain  ,data=mod_data)
+#checking the parameter estimates
+tidy(lm_fit2)
+#plot a dot whisker
+tidy(lm_fit2)%>%
+  dwplot(dot_args=list(size=2,color="black"),
+         whisker_args=list(color="black"),
+         vline=geom_vline(xintercept=0,color="grey50",linetype=2))
+```
+```{r}
+set.seed(123)
+Temp_split=initial_split(mod_data,strata = BodyTemp)
+Temp_train=training(Temp_split)
+Temp_test=testing(Temp_split)
+#cross valdiation
+set.seed(234)
+Temp_folds=vfold_cv(Temp_train,strata=BodyTemp)
+#logistic regression model
+lm_spec=linear_reg()%>%set_engine("lm")%>%set_mode("regression")
+rec_Temp1=recipe(BodyTemp~RunnyNose+ChillsSweats+Vomit+Weakness+ChestPain,data=Temp_train)
+  #step_dummy(all_nominal_predictors())
+wf_Temp1=workflow(rec_Temp1,lm_spec)
+
+#resampling
+doParallel::registerDoParallel()
+ctrl_preds=control_resamples(save_pred = TRUE)
+rs_Temp1=fit_resamples(wf_Temp1,Temp_folds,control=ctrl_preds)
+
+#Checking the model accuracy
+t2=augment(rs_Temp1)%>%
+metrics(truth = !!sym("BodyTemp"), estimate = .pred)%>%
+  rename("All_Predictors_No_interact_Estimate"=".estimate")%>%select(3)
+
+t2
+
+#Adding interactions
+rec_basic1%>%
+  prep()%>%bake(new_data=NULL)
+rec_interact=rec_basic1%>%
+  step_interact(~starts_with("RunnyNose"):starts_with("ChillsSweats"):starts_with("Vomit"):starts_with("Weakness"):starts_with("ChestPain"))
+
+wf_interact=workflow(rec_interact,glm_spec)
+rs_interact=fit_resamples(wf_interact, sym_folds,control=ctrl_preds)
+
+est3=augment(rs_interact)%>%
+ metrics(truth = !!sym("Nausea"), estimate = .pred_class)%>%
+ rename("All_Predictors_With_interact_Estimate"=".estimate")%>%
+  select(3)
+```
+
+#  Model `Nausea`based on `RunnyNose`
+
+```{r}
+set.seed(123)
+sym_split=initial_split(mod_data,strata = Nausea)
+sym_train=training(sym_split)
+sym_test=testing(sym_split)
+#cross valdiation
+set.seed(234)
+sym_folds=vfold_cv(sym_train,strata=Nausea)
+#logistic regression model
+glm_spec=logistic_reg()%>%
+  set_engine("glm")%>%
+  set_mode("classification")
+rec_basic=recipe(Nausea~RunnyNose,data=sym_train)
+# %>%
+#   step_dummy(all_nominal_predictors())
+wf_basic=workflow(rec_basic,glm_spec)
+#resampling
+doParallel::registerDoParallel()
+ctrl_preds=control_resamples(save_pred = TRUE)
+rs_basic=fit_resamples(wf_basic,sym_folds,control=ctrl_preds)
+logistic_pred=augment(rs_basic)
+#checking the sensitivity
+rs_basic_metrics <- logistic_pred %>% 
+                     metrics(truth = !!sym("Nausea"), estimate = .pred_class)
+est1=rs_basic_metrics%>%
+  rename("RunnyNose.estimate"=".estimate")
+est1
+
+```
+
+#The model build based on a single predictor doesn't seem to have great sensitivty. Let's try to build a model using all interetsed predictors.
+```{r}
+set.seed(123)
+sym_split=initial_split(mod_data,strata = Nausea)
+sym_train=training(sym_split)
+sym_test=testing(sym_split)
+#cross valdiation
+set.seed(234)
+sym_folds=vfold_cv(sym_train,strata=Nausea)
+#logistic regression model
+glm_spec=logistic_reg()%>%
+  set_engine("glm")%>%
+  set_mode("classification")
+rec_basic1=recipe(Nausea~RunnyNose+ChillsSweats+Vomit+Weakness+ChestPain,data=sym_train)
+  #step_dummy(all_nominal_predictors())
+wf_basic1=workflow(rec_basic1,glm_spec)
+
+#resampling
+doParallel::registerDoParallel()
+ctrl_preds=control_resamples(save_pred = TRUE)
+rs_basic1=fit_resamples(wf_basic1,sym_folds,control=ctrl_preds)
+
+#Checking the model accuracy
+est2=augment(rs_basic1)%>%
+metrics(truth = !!sym("Nausea"), estimate = .pred_class)%>%
+  rename("All_Predictors_No_interact_Estimate"=".estimate")%>%select(3)
+
+est2
+
+#Adding interactions
+rec_basic1%>%
+  prep()%>%bake(new_data=NULL)
+rec_interact=rec_basic1%>%
+  step_interact(~starts_with("RunnyNose"):starts_with("ChillsSweats"):starts_with("Vomit"):starts_with("Weakness"):starts_with("ChestPain"))
+
+wf_interact=workflow(rec_interact,glm_spec)
+rs_interact=fit_resamples(wf_interact, sym_folds,control=ctrl_preds)
+
+est3=augment(rs_interact)%>%
+ metrics(truth = !!sym("Nausea"), estimate = .pred_class)%>%
+ rename("All_Predictors_With_interact_Estimate"=".estimate")%>%
+  select(3)
+
+#compare the model accuracy estimates of three models together in compare_table
+Compare_table=est1%>%
+  bind_cols(est2)%>%
+  bind_cols(est3)
+Compare_table
+```
+
