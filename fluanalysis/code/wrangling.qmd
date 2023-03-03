@@ -2,8 +2,8 @@
 title: "wrangling"
 author: "Weifan Wu"
 editor: visual
-output:html_document
-date:"02/25/2023"
+output: html_document
+date: "02/25/2023"
 ---
 
 #Load Library
@@ -17,7 +17,7 @@ library(here)
 #Load Data and Check Data
 
 ```{r}
-data_location=here("data","SympAct_Any_Pos.Rda")
+data_location=here("fluanalysis","data","SympAct_Any_Pos.Rda")
 rawdata=readRDS("SympAct_Any_Pos.Rda",file=data_location)
 head(rawdata)
 skim(rawdata)
@@ -37,6 +37,6 @@ skim(d1)
 
 ```{r}
 processed_data=d1
-save_data_location1=here::here("data","processed_data.rds")
-saveRDS(processed_data,file=data_location1) 
+save_data_location1=here::here("fluanalysis","data","processed_data.rds")
+saveRDS(processed_data,file=save_data_location1) 
 ```

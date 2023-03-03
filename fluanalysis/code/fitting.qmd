@@ -2,8 +2,8 @@
 title: "Fitting"
 author: "WeifaN Wu"
 editor: visual
-output:html_document
-date:"02/25/2023"
+output: html_document
+date: "02/25/2023"
 ---
 
 #Main continous outcome of interest is `Body Temperature`, and main categorical outcome is `Nausea` #Load Library

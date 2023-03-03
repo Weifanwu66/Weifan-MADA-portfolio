@@ -2,8 +2,8 @@
 title: "EDA"
 author: "Weifan Wu"
 editor: visual
-output:html_document
-date:"02/25/2023"
+output: html_document
+date: "02/25/2023"
 ---
 
 ##EDA
