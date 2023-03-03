@@ -13,7 +13,6 @@ library(tidyverse)
 library(here)
 library(skimr)
 library(tidymodels)
-library(dotwhisker)
 library(glmnet)
 ```
 
@@ -31,19 +30,17 @@ exp_data
 head(exp_data)
 skim(exp_data)
 view(exp_data)
-#Drop Unnecessary variables
-mod_data=exp_data%>%
-  select(c("ChillsSweats", "Vomit", "Weakness", "ChestPain", "RunnyNose","BodyTemp","Nausea"))
-mod_data
 ```
+
 ###Fitting models
 
 ## Linear Regression Model
- 
+
 # Model `BodyTemp`based on `RunnyNose`
+
 ```{r}
 set.seed(123)
-Temp_split=initial_split(mod_data,strata = BodyTemp)
+Temp_split=initial_split(exp_data,strata = BodyTemp)
 Temp_train=training(Temp_split)
 Temp_test=testing(Temp_split)
 #cross valdiation
@@ -59,18 +56,18 @@ doParallel::registerDoParallel()
 ctrl_preds=control_resamples(save_pred = TRUE)
 rs_Temp=fit_resamples(wf_Temp,Temp_folds,control=ctrl_preds)
 linear_pred=augment(rs_Temp)
-#checking the sensitivity
+#checking the R^2 for models
 rs_Temp_metrics <- linear_pred %>% 
                      metrics(truth = !!sym("BodyTemp"), estimate = .pred)
 t1=rs_Temp_metrics%>%
-  rename("RunnyNose.estimate"=".estimate")
+  rename("RunnyNose_Estimate"=".estimate")
 ```
 
-# Model `BodyTemp` based on all predictors: ChillsSweats, Vomit, Weakness, ChestPain, and RunnyNose with/ without interactions
+# Model `BodyTemp` based on all predictors
 
 ```{r}
 set.seed(123)
-Temp_split=initial_split(mod_data,strata = BodyTemp)
+Temp_split=initial_split(exp_data,strata = BodyTemp)
 Temp_train=training(Temp_split)
 Temp_test=testing(Temp_split)
 
@@ -80,7 +77,7 @@ Temp_folds=vfold_cv(Temp_train,strata=BodyTemp)
 
 #linear regression model Setup
 lm_spec=linear_reg()%>%set_engine("lm")%>%set_mode("regression")
-rec_Temp1=recipe(BodyTemp~RunnyNose+ChillsSweats+Vomit+Weakness+ChestPain,data=Temp_train)
+rec_Temp1=recipe(BodyTemp~.,data=Temp_train)
 wf_Temp1=workflow(rec_Temp1,lm_spec)
 
 # Resampling
@@ -91,36 +88,21 @@ rs_Temp1=fit_resamples(wf_Temp1,Temp_folds,control=ctrl_preds)
 # Checking the model accuracy
 t2=augment(rs_Temp1)%>%
 metrics(truth = !!sym("BodyTemp"), estimate = .pred)%>%
-  rename("All_Predictors_No_interact_Estimate"=".estimate")%>%select(3)
+  rename("All_Predictors_Estimate"=".estimate")%>%select(3)
 
 t2
 
-# Adding interactions
-rec_Temp1%>%
-  prep()%>%bake(new_data=NULL)
-rec_Temp_interact=rec_Temp1%>%
-  step_interact(~starts_with("RunnyNose"):starts_with("ChillsSweats"):starts_with("Vomit"):starts_with("Weakness"):starts_with("ChestPain"))
-
-wf_Temp_interact=workflow(rec_Temp_interact,lm_spec)
-rs_Temp_interact=fit_resamples(wf_Temp_interact, Temp_folds,control=ctrl_preds)
-
-t3=augment(rs_Temp_interact)%>%
- metrics(truth = !!sym("BodyTemp"), estimate = .pred)%>%
- rename("All_Predictors_With_Interact_Estimate"=".estimate")%>%
-  select(3)
-t3
-
 # Compare the model accuracy estimates of three models together in compare_Temp_table
-Compare_Temp_table=t1%>%
-  bind_cols(t2)%>%
-  bind_cols(t3)
-Compare_Temp_table
+Compare_table_1=t1%>%
+  bind_cols(t2)
+Compare_table_1
 ```
-From the table we can conclude that the model explains the most (R^2=19%) variations of BodyTemp when it includes all the interested predictors without interactions
+
+From the table we can conclude that the model explains the more (R\^2=4.8%) variations of BodyTemp when it includes all the interested predictors than when it only concludes RunnyNose as predictor (R^2=0.7%).
 
 ## Logistic Regression Model
 
-#  Model `Nausea`based on `RunnyNose`
+# Model `Nausea`based on `RunnyNose`
 
 ```{r}
 #Setting training and testing data 
@@ -155,6 +137,7 @@ est1
 ```
 
 # Build a model using all interetsed predictors.
+
 ```{r}
 set.seed(123)
 sym_split=initial_split(mod_data,strata = Nausea)
@@ -167,7 +150,7 @@ sym_folds=vfold_cv(sym_train,strata=Nausea)
 glm_spec=logistic_reg()%>%
   set_engine("glm")%>%
   set_mode("classification")
-rec_basic1=recipe(Nausea~RunnyNose+ChillsSweats+Vomit+Weakness+ChestPain,data=sym_train)
+rec_basic1=recipe(Nausea~.,data=sym_train)
   #step_dummy(all_nominal_predictors())
 wf_basic1=workflow(rec_basic1,glm_spec)
 
@@ -183,25 +166,10 @@ metrics(truth = !!sym("Nausea"), estimate = .pred_class)%>%
 
 est2
 
-# Adding interactions
-rec_basic1%>%
-  prep()%>%bake(new_data=NULL)
-rec_interact=rec_basic1%>%
-  step_interact(~starts_with("RunnyNose"):starts_with("ChillsSweats"):starts_with("Vomit"):starts_with("Weakness"):starts_with("ChestPain"))
-
-wf_interact=workflow(rec_interact,glm_spec)
-rs_interact=fit_resamples(wf_interact, sym_folds,control=ctrl_preds)
-
-est3=augment(rs_interact)%>%
- metrics(truth = !!sym("Nausea"), estimate = .pred_class)%>%
- rename("All_Predictors_With_interact_Estimate"=".estimate")%>%
-  select(3)
-
-# Compare the model accuracy estimates of three models together in compare_table
-Compare_table=est1%>%
-  bind_cols(est2)%>%
-  bind_cols(est3)
-Compare_table
+# Compare the model accuracy estimates of two models together in compare_table
+Compare_table_2=est1%>%
+  bind_cols(est2)
+Compare_table_2
 ```
 
-This table indicates that when model is trained based on all predictors with no interactions, it has the highest accuracy.
+This table indicates that when model is trained based on all predictors, it has higher accuracy than the model that is trained based on RunnyNose.

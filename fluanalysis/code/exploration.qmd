@@ -15,14 +15,14 @@ library(skimr)
 library(gtsummary)
 library(ggstatsplot)
 library(ggbeeswarm)
+library(DataExplorer)
 ```
 
 #Load Data
 
 ```{r}
-data_location2=here("data","processed_data.rds")
-
-exp_data=readRDS(file=data_location2)
+data_location2=here("fluanalysis","data","processed_data.rds")
+exp_data=readRDS("processed_data.rds", file=data_location2)
 ```
 
 #Check Data

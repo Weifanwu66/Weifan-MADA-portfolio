@@ -12,12 +12,21 @@ website:
         menu:
           - text: "R Coding Exercise"
             href: ./exercise/code/analysis_code/coding_exercise.html
-          - text: "Data Analysis Exercise "
-            href: ./exercise/code/data_processing_code/dataanalysis_exercise.html  
+          - text: "Data Analysis Exercise"
+            href: ./exercise/code/data_processing_code/dataanalysis_exercise.html
           - text: "Visualization Exercise"
             href: ./visualization_exercise.html
           - text: "Tidy Tuesday Exercise"
             href: ./tidytuesday_exercise.html
+      - text: "fluanalysis"
+         menu:
+          - text: "wrangling"
+            href: ./fluanalysis/code/wrangling.html
+          - text: "exploration"
+            href: ./fluanalysis/code/exploration.html
+          - text: "fitting"
+            href: ../fluanalysis/code/fitting.html
+         
     right:
       - icon: github 
         href: URL-TO-THIS-REPOSITORY-HERE        
