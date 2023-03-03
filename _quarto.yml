@@ -19,17 +19,17 @@ website:
           - text: "Tidy Tuesday Exercise"
             href: ./tidytuesday_exercise.html
       - text: "fluanalysis"
-         menu:
+        menu:
           - text: "wrangling"
             href: ./fluanalysis/code/wrangling.html
           - text: "exploration"
             href: ./fluanalysis/code/exploration.html
           - text: "fitting"
-            href: ../fluanalysis/code/fitting.html
+            href: ./fluanalysis/code/fitting.html
          
     right:
       - icon: github 
-        href: URL-TO-THIS-REPOSITORY-HERE        
+        href: URL-TO-THIS-REPOSITORY-HERE
 
 format:
   html:
