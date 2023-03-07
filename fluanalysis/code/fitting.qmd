@@ -1,6 +1,6 @@
 ---
 title: "Fitting"
-author: "WeifaN Wu"
+author: "Weifan Wu"
 editor: visual
 output: html_document
 date: "02/25/2023"
@@ -20,8 +20,7 @@ library(glmnet)
 
 ```{r}
 data_location=here::here("fluanalysis","data","processed_data.rds")
-exp_data=readRDS("processed_data.rds",file=data_location)
-exp_data
+exp_data=readRDS(file=data_location)
 ```
 
 #Check Data
@@ -29,21 +28,20 @@ exp_data
 ```{r}
 head(exp_data)
 skim(exp_data)
-view(exp_data)
 ```
 
-###Fitting models
+#Fitting models
 
-## Linear Regression Model
+# Linear Regression Model
 
-# Model `BodyTemp`based on `RunnyNose`
+## Model `BodyTemp`based on `RunnyNose`
 
 ```{r}
 set.seed(123)
 Temp_split=initial_split(exp_data,strata = BodyTemp)
 Temp_train=training(Temp_split)
 Temp_test=testing(Temp_split)
-#cross valdiation
+#cross validation
 set.seed(234)
 Temp_folds=vfold_cv(Temp_train,strata=BodyTemp)
 #set an engine for linear regression model
@@ -63,7 +61,7 @@ t1=rs_Temp_metrics%>%
   rename("RunnyNose_Estimate"=".estimate")
 ```
 
-# Model `BodyTemp` based on all predictors
+## Model `BodyTemp` based on all predictors
 
 ```{r}
 set.seed(123)
@@ -98,16 +96,16 @@ Compare_table_1=t1%>%
 Compare_table_1
 ```
 
-From the table we can conclude that the model explains the more (R\^2=4.8%) variations of BodyTemp when it includes all the interested predictors than when it only concludes RunnyNose as predictor (R^2=0.7%).
+From the table we can conclude that the model explains the more (R\^2=4.8%) variations of BodyTemp when it includes all the interested predictors than when it only concludes RunnyNose as predictor (R\^2=0.7%).
 
-## Logistic Regression Model
+# Logistic Regression Model
 
-# Model `Nausea`based on `RunnyNose`
+## Model `Nausea`based on `RunnyNose`
 
 ```{r}
 #Setting training and testing data 
 set.seed(123)
-sym_split=initial_split(mod_data,strata = Nausea)
+sym_split=initial_split(exp_data,strata = Nausea)
 sym_train=training(sym_split)
 sym_test=testing(sym_split)
 
@@ -136,14 +134,14 @@ est1=rs_basic_metrics%>%
 est1
 ```
 
-# Build a model using all interetsed predictors.
+## Build a model using all predictors.
 
 ```{r}
 set.seed(123)
-sym_split=initial_split(mod_data,strata = Nausea)
+sym_split=initial_split(exp_data,strata = Nausea)
 sym_train=training(sym_split)
 sym_test=testing(sym_split)
-#cross valdiation
+#cross validation
 set.seed(234)
 sym_folds=vfold_cv(sym_train,strata=Nausea)
 #logistic regression model

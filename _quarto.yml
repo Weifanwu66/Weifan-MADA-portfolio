@@ -29,8 +29,7 @@ website:
          
     right:
       - icon: github 
-        href: URL-TO-THIS-REPOSITORY-HERE
-
+        href: "https://github.com/Weifanwu66/Weifan-MADA-portfolio"
 format:
   html:
     theme: cosmo

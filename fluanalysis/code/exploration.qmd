@@ -30,7 +30,6 @@ exp_data=readRDS("processed_data.rds", file=data_location2)
 ```{r}
 head(exp_data)
 skim(exp_data)
-view(exp_data)
 ```
 
 #Get Summary Tables
