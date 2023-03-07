@@ -12,8 +12,6 @@ loading and checking data
 library("dslabs")
 #load tidyverse package
 library("tidyverse")
-#look at help file for gapminder data
-help(gapminder)
 #get an overview of data structure
 str(gapminder)
 #get a summary of data structure

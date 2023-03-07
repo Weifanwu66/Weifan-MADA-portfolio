@@ -1,0 +1,128 @@
+---
+title: "EDA"
+author: "Weifan Wu"
+editor: visual
+output: html_document
+date: "02/25/2023"
+---
+
+
+##EDA
+#Main continous outcome of interest is `Body Temperature`, and main categorical outcome is `Nausea` #Load Library 
+
+```{r}
+library(tidyverse)
+library(here)
+library(skimr)
+library(gtsummary)
+library(ggstatsplot)
+library(ggbeeswarm)
+library(DataExplorer)
+```
+
+
+#Load Data
+
+
+```{r}
+data_location2=here("fluanalysis","data","processed_data.rds")
+exp_data=readRDS("processed_data.rds", file=data_location2)
+```
+
+
+#Check Data
+
+
+```{r}
+head(exp_data)
+skim(exp_data)
+```
+
+
+#Get Summary Tables
+
+
+```{r}
+#Get Summary Table for exp_data, grouped by Nausea
+tbl_summary(exp_data,by=Nausea)
+```
+
+
+#Histogram and Density plot for for Body Temperature
+
+
+```{r}
+plot_histogram(exp_data)
+plot_density(exp_data)
+```
+
+
+#It appears that the Body Temperature is right skewed, which is expected. Data distributed within a reasonable range (~97-103).let's check for normality
+
+```{r}
+plot_qq(exp_data)
+```
+
+
+##Exploration of the relationships between outcomes and predictors
+#The predictors that I choose include:  ChillsSweats, Vomit, Weakness, ChestPain, and RunnyNose
+#the outcomes are BodyTemp and Nausea
+
+
+```{r}
+# Explore all predictor variables vs `BodyTemp` 
+
+# `ChillsSweats` VS `BodyTemp` 
+ggplot(exp_data,aes(x=ChillsSweats, y=BodyTemp))+
+  geom_boxplot()
+# It appears that the median temperature is slightly higher in the population who have chillsweats VS no chillsweats. There are more samples that have high body temperature (>102 degree) in the group with chillssweats symptom.
+
+#`Vomit` VS `BodyTemp` grouped by weakness
+ggplot(exp_data,aes(x=Vomit, y=BodyTemp,color=Weakness))+
+  geom_quasirandom(alpha=0.5,varwidth=TRUE)+
+  stat_summary(fun=median,geom="crossbar")
+#There are more people who have no vomit than people who suffer vomit. Most people have moderate weakness.
+
+# `Weakness` levels VS `BodyTemp`
+ggplot(exp_data,aes(x=Weakness, y=BodyTemp))+
+  geom_boxplot()
+#It seems like overall the severe weakness comes with highest median temperature, which is expected
+
+# `ChestPain` VS `BodyTemp`
+ggplot(exp_data,aes(x=ChestPain, y=BodyTemp))+
+  geom_quasirandom(alpha=0.5,varwidth=TRUE)+
+  stat_summary(fun=median,geom="crossbar")
+
+# `RunnyNose` vs `BodyTemp`group by weakness levels
+ggplot(exp_data,aes(x=RunnyNose, y=BodyTemp))+
+ geom_quasirandom(alpha=0.5,varwidth=TRUE)+
+  stat_summary(fun=median,geom="crossbar")
+
+#`Vomit` VS `BodyTemp`
+ggplot(exp_data,aes(x=Vomit, y=BodyTemp))+
+geom_quasirandom(alpha=0.5,varwidth=TRUE)+
+  stat_summary(fun=median,geom="crossbar")
+```
+
+ChillsSweats, Vomit, Weakness, ChestPain, and RunnyNose
+
+
+```{r}
+#Let's check if there's any pattern between outcome `Nausea` VS all the predictor variables
+# `Nausea` VS `ChillsSweats`
+ggbarstats(data=exp_data,x=Nausea,y=ChillsSweats,label="both")
+# `Nausea` VS `Vomit`
+ggbarstats(data=exp_data,x=Nausea,y=Vomit,label="both")
+# `Nausea` VS `Weakness`
+ggbarstats(data=exp_data,x=Nausea,y= Weakness,label="both")
+# `Nausea` VS `ChestPain`
+ggbarstats(data=exp_data,x=Nausea,y=ChestPain,label="both")
+# `Nausea` VS `RunnyNose`
+ggbarstats(data=exp_data,x=Nausea,y=RunnyNose,label="both")
+```
+
+#It seems like other than RunnyNose, every other predictors have a clear relationship with Nausea
+
+
+
+
