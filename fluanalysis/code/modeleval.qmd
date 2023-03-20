@@ -1,0 +1,124 @@
+---
+title: "model evaluation"
+author: "Weifan Wu"
+editor: visual
+output: html_document
+date: "03/20/2023"
+---
+
+## Main categorical outcome is `Nausea`
+
+### Load Library
+
+```{r}
+library(tidyverse)
+library(here)
+library(skimr)
+library(tidymodels)
+library(glmnet)
+```
+
+### Load Data
+
+```{r}
+data_location=here::here("fluanalysis","data","processed_data.rds")
+exp_data=readRDS(file=data_location)
+```
+
+### Check Data
+
+```{r}
+head(exp_data)
+skim(exp_data)
+```
+
+### Data splitting
+
+```{r}
+## Splitting the data with outcome Nausea distributed evenly in training and testing data
+set.seed(123)
+nausea_split=initial_split(exp_data,strata = Nausea)
+nausea_train=training(nausea_split)
+nausea_test=testing(nausea_split)
+```
+
+### Creating workflow and fitting model using all predictors
+
+```{r}
+nausea_rec=recipe(Nausea~.,data=nausea_train)
+lr_mod=logistic_reg()%>%
+  set_engine("glm")
+nausea_workflow=workflow()%>%
+  add_model(lr_mod)%>%
+  add_recipe(nausea_rec)
+nausea_workflow
+nausea_fit=nausea_workflow%>%
+  fit(data=nausea_train)
+nausea_fit%>%
+  extract_fit_parsnip()%>%
+  tidy()
+```
+
+### Use the trained workflow to predict both training and testing data
+
+```{r}
+predict(nausea_fit,nausea_train)
+nausea_aug_train=augment(nausea_fit,nausea_train)
+nausea_aug_train%>%
+  roc_curve(truth=Nausea,.pred_No)%>%
+  autoplot()
+predict(nausea_fit,nausea_test)
+nausea_aug_test=augment(nausea_fit,nausea_test)
+nausea_aug_test%>%
+  roc_curve(truth=Nausea,.pred_No)%>%
+  autoplot()
+# Using roc_auc ()to estimate the area under the curve
+nausea_aug_train%>%
+  roc_auc(truth=Nausea,.pred_No)
+predict(nausea_fit,nausea_test)
+nausea_aug_test=augment(nausea_fit,nausea_test)
+nausea_aug_test%>%
+  roc_auc(truth=Nausea,.pred_No)
+```
+
+### Creating workflow and fitting model using the main predictor (`RunnyNose`)
+
+```{r}
+set.seed(234)
+nausea_rec2=recipe(Nausea~RunnyNose,data=nausea_train)
+lr_mod=logistic_reg()%>%
+  set_engine("glm")
+nausea_workflow2=workflow()%>%
+  add_model(lr_mod)%>%
+  add_recipe(nausea_rec2)
+nausea_workflow
+nausea_fit2=nausea_workflow2%>%
+  fit(data=nausea_train)
+nausea_fit2%>%
+  extract_fit_parsnip()%>%
+  tidy()
+```
+
+### Use the trained workflow to predict both training and testing data
+
+```{r}
+predict(nausea_fit2,nausea_train)
+nausea_aug_train2=augment(nausea_fit2,nausea_train)
+nausea_aug_train2%>%
+  roc_curve(truth=Nausea,.pred_No)%>%
+  autoplot()
+predict(nausea_fit2,nausea_test)
+nausea_aug_test2=augment(nausea_fit2,nausea_test)
+nausea_aug_test2%>%
+  roc_curve(truth=Nausea,.pred_No)%>%
+  autoplot()
+# Using roc_auc ()to estimate the area under the curve
+nausea_aug_train2%>%
+  roc_auc(truth=Nausea,.pred_No)
+predict(nausea_fit2,nausea_test)
+nausea_aug_test2=augment(nausea_fit2,nausea_test)
+nausea_aug_test2%>%
+  roc_auc(truth=Nausea,.pred_No)
+```
+
+#### Overall, the model built and trained based on all predictors has a higher roc_auc than that built and trained based on the main predictor `RunnyNose`. Specifically, the a roc_auc of 0.72 was obtained when the full-model predicted testing data and 0.79 when it predicted the training data. In contrast, a roc_auc close to 0.5 (no use) was achieved when only the main predictor was used in the model.
