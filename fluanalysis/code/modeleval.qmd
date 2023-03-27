@@ -30,8 +30,9 @@ exp_data=readRDS(file=data_location)
 ```{r}
 head(exp_data)
 skim(exp_data)
+view(exp_data)
 ```
-
+### Ordinal predictors: Weakness, CoughIntensity, Myalgia
 ### Data splitting
 
 ```{r}
@@ -40,12 +41,20 @@ set.seed(123)
 nausea_split=initial_split(exp_data,strata = Nausea)
 nausea_train=training(nausea_split)
 nausea_test=testing(nausea_split)
+nausea_train
 ```
 
 ### Creating workflow and fitting model using all predictors
-
+### data preprocessing using recipe function
 ```{r}
-nausea_rec=recipe(Nausea~.,data=nausea_train)
+nausea_rec=recipe(Nausea~.,data=nausea_train)%>%
+  step_dummy(all_nominal_predictors(),-Weakness,-CoughIntensity,-Myalgia)%>%
+  step_mutate(Weakness = factor(Weakness, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE),
+              CoughIntensity= factor(CoughIntensity, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE),
+              Myalgia=factor(Myalgia, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE)) %>%
+  step_ordinalscore(Weakness, CoughIntensity, Myalgia)%>%
+  step_nzv(all_predictors(),unique_cut = 50)
+nausea_rec
 lr_mod=logistic_reg()%>%
   set_engine("glm")
 nausea_workflow=workflow()%>%
@@ -102,19 +111,16 @@ nausea_fit2%>%
 ### Use the trained workflow to predict both training and testing data
 
 ```{r}
-
 predict(nausea_fit2,nausea_train)
 nausea_aug_train2=augment(nausea_fit2,nausea_train)
 nausea_aug_train2%>%
   roc_curve(truth=Nausea,.pred_No)%>%
   autoplot()
-
 predict(nausea_fit2,nausea_test)
 nausea_aug_test2=augment(nausea_fit2,nausea_test)
 nausea_aug_test2%>%
   roc_curve(truth=Nausea,.pred_No)%>%
   autoplot()
-
 # Using roc_auc ()to estimate the area under the curve
 nausea_aug_train2%>%
   roc_auc(truth=Nausea,.pred_No)
@@ -125,117 +131,3 @@ nausea_aug_test2%>%
 ```
 
 #### Overall, the model built and trained based on all predictors has a higher roc_auc than that built and trained based on the main predictor `RunnyNose`. Specifically, the a roc_auc of 0.72 was obtained when the full-model predicted testing data and 0.79 when it predicted the training data. In contrast, a roc_auc close to 0.5 (no use) was achieved when only the main predictor was used in the model.
-
-# This section added by Jacob Matta
-
-### Data splitting
-
-```{r}
-## Splitting the data with outcome body temp distributed evenly in training and testing data
-set.seed(123)
-BodyTemp_split=initial_split(exp_data,strata = BodyTemp)
-BodyTemp_train=training(BodyTemp_split)
-BodyTemp_test=testing(BodyTemp_split)
-```
-
-## Creating model fit using the outcome of interest and all of the predictors
-
-### Creating workflow and fitting model using all predictors and our continuos outcome which is body temperature
-
-```{r}
-#creating recipe for body temperature and all of the predictors 
-BodyTemp_rec=recipe(BodyTemp~., data=BodyTemp_train)
-ln_mod=linear_reg()%>%
-  set_engine("lm")
-
-#creating a bodytemp workflow 
-BodyTemp_workflow=workflow()%>%
-  add_model(ln_mod)%>%
-  add_recipe(BodyTemp_rec)
-BodyTemp_workflow
-
-#creating a body temp fit by adding the body temp training data 
-BodyTemp_fit=BodyTemp_workflow%>%
-  fit(data=BodyTemp_train)
-
-BodyTemp_fit%>%
-  extract_fit_parsnip()%>%
-  tidy()
-```
-
-### Use the trained workflow to predict both training and testing data
-
-```{r}
-Train_predictions = predict(BodyTemp_fit, BodyTemp_train)
-
-BodyTemp_aug_train = augment(BodyTemp_fit,BodyTemp_train)
-
-Test_predictions =predict(BodyTemp_fit, BodyTemp_test)
-
-BodyTemp_aug_test = augment(BodyTemp_fit,BodyTemp_test)
-
-```
-
-### Examining the RMSE for both models
-
-```{r}
-rmse_train = rmse(actual = BodyTemp_aug_train$BodyTemp, predicted =  BodyTemp_aug_train$.pred)
-        
-
-rmse_test = rmse(actual = BodyTemp_aug_test$BodyTemp, predicted =  BodyTemp_aug_test$.pred)     
-
-
-rmse_train
-rmse_test
-```
-
-## Creating a model for the outcome of interest and our predictor of interest
-
-```{r}
-#creating recipe for body temperature and all of the predictors 
-BodyTemp_rec2 =recipe(BodyTemp~RunnyNose, data=BodyTemp_train)
-
-#creating linear model for outcome and predictor of interest
-ln_mod2=linear_reg()%>%
-  set_engine("lm")
-
-#creating a bodytemp workflow 
-BodyTemp_workflow2 =workflow()%>%
-  add_model(ln_mod2)%>%
-  add_recipe(BodyTemp_rec2)
-BodyTemp_workflow2
-
-#creating a body temp fit by adding the body temp training data 
-BodyTemp_fit2 =BodyTemp_workflow2%>%
-  fit(data=BodyTemp_train)
-
-BodyTemp_fit2 %>%
-  extract_fit_parsnip()%>%
-  tidy()
-```
-
-### Use the trained workflow to predict both training and testing data
-
-```{r}
-Train_predictions2 = predict(BodyTemp_fit2, BodyTemp_train)
-
-BodyTemp_aug_train2 = augment(BodyTemp_fit2,BodyTemp_train)
-
-Test_predictions2 =predict(BodyTemp_fit2, BodyTemp_test)
-
-BodyTemp_aug_test2 = augment(BodyTemp_fit2,BodyTemp_test)
-
-```
-
-### Examining the RMSE for both models
-
-```{r}
-rmse_train2 = rmse(actual = BodyTemp_aug_train2$BodyTemp, predicted =  BodyTemp_aug_train2$.pred)
-        
-
-rmse_test2 = rmse(actual = BodyTemp_aug_test2$BodyTemp, predicted =  BodyTemp_aug_test2$.pred)     
-
-
-rmse_train2
-rmse_test2
-```

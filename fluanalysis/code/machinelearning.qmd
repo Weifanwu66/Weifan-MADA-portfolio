@@ -1,0 +1,79 @@
+---
+title: "machine learning"
+author: "Weifan Wu"
+editor: visual
+output: html_document
+date: "02/25/2023"
+---
+### Using machine learning approach to predict `BodyTemp`
+##Set up Libraries
+```{r}
+library(tidyverse)
+library(here)
+library(skimr)
+library(tidymodels)
+```
+
+## Load data
+```{r}
+data_location=here::here("fluanalysis","data","processed_data.rds")
+exp_data=readRDS(file=data_location)
+```
+
+## Data Setup
+```{r}
+set.seed(123)
+# data splitting
+bodytemp_split=initial_split(exp_data,prop=0.7,strata = BodyTemp)
+bodytemp_train=training(bodytemp_split)
+bodytemp_test=testing(bodytemp_split)
+bodytemp_train
+# data re-sampling using cross-validation
+bodyemp_folds=vfold_cv(bodytemp_train,v=5,repeats = 5,strata = BodyTemp)
+# Create a recipe
+bodytemp_rec=recipe(BodyTemp~.,data=bodytemp_train)%>%
+  step_dummy(all_nominal(),-Weakness,-CoughIntensity,-Myalgia)%>%
+  step_mutate(Weakness = factor(Weakness, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE),
+              CoughIntensity= factor(CoughIntensity, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE),
+              Myalgia=factor(Myalgia, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE)) %>%
+  step_ordinalscore(Weakness, CoughIntensity, Myalgia)%>%
+  step_nzv(all_predictors(),unique_cut = 50)
+```
+## Creating workflow without models
+```{r}
+bodytemp_wf=workflow()%>%
+  add_recipe(bodytemp_rec)
+```
+
+## Null model performance
+```{r}
+null_regression <- null_model() %>%
+  set_engine("parsnip") %>%
+  set_mode("regression")
+
+null_rs <- fit_resamples(
+ bodytemp_wf %>% add_model(null_regression),
+  bodyemp_folds,
+  metrics = metric_set(rmse),
+ control=control_resamples(save_pred = TRUE)
+)
+
+null_rs%>%
+  collect_metrics()
+
+null_rs%>%
+  collect_predictions()%>%
+  roc_auc(BodyTemp,.pred)%>%
+  autoplot()
+```
+
+## Model specification for three models
+```{r}
+# 
+```
+
+## Creating workflows for three models
+```{r}
+
+```
+
