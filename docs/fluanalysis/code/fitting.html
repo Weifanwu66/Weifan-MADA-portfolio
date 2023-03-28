@@ -188,6 +188,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../.././fluanalysis/code/fitting.html">
  <span class="dropdown-text">fitting</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/modeleval.html">
+ <span class="dropdown-text">Model evaluation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/machinelearning.html">
+ <span class="dropdown-text">Machine Learning</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -274,7 +282,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 ✖ dplyr::lag()      masks stats::lag()
 ✖ yardstick::spec() masks readr::spec()
 ✖ recipes::step()   masks stats::step()
-• Dig deeper into tidy modeling with R at https://www.tmwr.org</code></pre>
+• Learn how to get started at https://www.tidymodels.org/start/</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(glmnet)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
@@ -298,41 +306,34 @@ Loaded glmnet 4.1-6</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(exp_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>  SwollenLymphNodes ChestCongestion ChillsSweats NasalCongestion CoughYN Sneeze
-1               Yes              No           No              No     Yes     No
-2               Yes             Yes           No             Yes     Yes     No
-3               Yes             Yes          Yes             Yes      No    Yes
-4               Yes             Yes          Yes             Yes     Yes    Yes
-5               Yes              No          Yes              No      No     No
-6                No              No          Yes              No     Yes    Yes
-  Fatigue SubjectiveFever Headache Weakness WeaknessYN CoughIntensity CoughYN2
-1     Yes             Yes      Yes     Mild        Yes         Severe      Yes
-2     Yes             Yes      Yes   Severe        Yes         Severe      Yes
-3     Yes             Yes      Yes   Severe        Yes           Mild      Yes
-4     Yes             Yes      Yes   Severe        Yes       Moderate      Yes
-5     Yes             Yes      Yes Moderate        Yes           None       No
-6     Yes             Yes      Yes Moderate        Yes       Moderate      Yes
-   Myalgia MyalgiaYN RunnyNose AbPain ChestPain Diarrhea EyePn Insomnia
-1     Mild       Yes        No     No        No       No    No       No
-2   Severe       Yes        No     No        No       No    No       No
-3   Severe       Yes       Yes    Yes       Yes       No    No      Yes
-4   Severe       Yes       Yes     No        No       No    No      Yes
-5     Mild       Yes        No     No        No       No   Yes      Yes
-6 Moderate       Yes        No     No       Yes      Yes    No       No
-  ItchyEye Nausea EarPn Hearing Pharyngitis Breathless ToothPn Vision Vomit
-1       No     No    No      No         Yes         No      No     No    No
-2       No     No   Yes     Yes         Yes         No      No     No    No
-3       No    Yes    No      No         Yes        Yes     Yes     No    No
-4       No    Yes   Yes      No         Yes         No      No     No    No
-5       No    Yes    No      No         Yes         No      No     No    No
-6       No    Yes    No      No         Yes        Yes      No     No    No
-  Wheeze BodyTemp
-1     No     98.3
-2     No    100.4
-3     No    100.8
-4    Yes     98.8
-5     No    100.5
-6    Yes     98.4</code></pre>
+<pre><code>  SwollenLymphNodes ChestCongestion ChillsSweats NasalCongestion Sneeze Fatigue
+1               Yes              No           No              No     No     Yes
+2               Yes             Yes           No             Yes     No     Yes
+3               Yes             Yes          Yes             Yes    Yes     Yes
+4               Yes             Yes          Yes             Yes    Yes     Yes
+5               Yes              No          Yes              No     No     Yes
+6                No              No          Yes              No    Yes     Yes
+  SubjectiveFever Headache Weakness CoughIntensity  Myalgia RunnyNose AbPain
+1             Yes      Yes     Mild         Severe     Mild        No     No
+2             Yes      Yes   Severe         Severe   Severe        No     No
+3             Yes      Yes   Severe           Mild   Severe       Yes    Yes
+4             Yes      Yes   Severe       Moderate   Severe       Yes     No
+5             Yes      Yes Moderate           None     Mild        No     No
+6             Yes      Yes Moderate       Moderate Moderate        No     No
+  ChestPain Diarrhea EyePn Insomnia ItchyEye Nausea EarPn Hearing Pharyngitis
+1        No       No    No       No       No     No    No      No         Yes
+2        No       No    No       No       No     No   Yes     Yes         Yes
+3       Yes       No    No      Yes       No    Yes    No      No         Yes
+4        No       No    No      Yes       No    Yes   Yes      No         Yes
+5        No       No   Yes      Yes       No    Yes    No      No         Yes
+6       Yes      Yes    No       No       No    Yes    No      No         Yes
+  Breathless ToothPn Vision Vomit Wheeze BodyTemp
+1         No      No     No    No     No     98.3
+2         No      No     No    No     No    100.4
+3        Yes     Yes     No    No     No    100.8
+4         No      No     No    No    Yes     98.8
+5         No      No     No    No     No    100.5
+6        Yes      No     No    No    Yes     98.4</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(exp_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
@@ -349,7 +350,7 @@ Loaded glmnet 4.1-6</code></pre>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">32</td>
+<td style="text-align: left;">28</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -361,7 +362,7 @@ Loaded glmnet 4.1-6</code></pre>
 </tr>
 <tr class="even">
 <td style="text-align: left;">factor</td>
-<td style="text-align: left;">31</td>
+<td style="text-align: left;">27</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">numeric</td>
@@ -431,14 +432,6 @@ Loaded glmnet 4.1-6</code></pre>
 <td style="text-align: left;">Yes: 563, No: 167</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">CoughYN</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 655, No: 75</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Sneeze</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
@@ -446,7 +439,7 @@ Loaded glmnet 4.1-6</code></pre>
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">Yes: 391, No: 339</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Fatigue</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
@@ -454,7 +447,7 @@ Loaded glmnet 4.1-6</code></pre>
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">Yes: 666, No: 64</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">SubjectiveFever</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
@@ -462,7 +455,7 @@ Loaded glmnet 4.1-6</code></pre>
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">Yes: 500, No: 230</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Headache</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
@@ -470,21 +463,13 @@ Loaded glmnet 4.1-6</code></pre>
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">Yes: 615, No: 115</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Weakness</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: left;">Mod: 338, Mil: 223, Sev: 120, Non: 49</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">WeaknessYN</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 681, No: 49</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">CoughIntensity</td>
@@ -495,28 +480,12 @@ Loaded glmnet 4.1-6</code></pre>
 <td style="text-align: left;">Mod: 357, Sev: 172, Mil: 154, Non: 47</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">CoughYN2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 683, No: 47</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Myalgia</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: left;">Mod: 325, Mil: 213, Sev: 113, Non: 79</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">MyalgiaYN</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 651, No: 79</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">RunnyNose</td>
@@ -759,8 +728,8 @@ Loaded glmnet 4.1-6</code></pre>
   All_Predictors_Estimate
                     &lt;dbl&gt;
 1                  1.18  
-2                  0.0480
-3                  0.875 </code></pre>
+2                  0.0479
+3                  0.871 </code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the model accuracy estimates of three models together in compare_Temp_table</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>Compare_table_1<span class="ot">=</span>t1<span class="sc">%&gt;%</span></span>
@@ -771,8 +740,8 @@ Loaded glmnet 4.1-6</code></pre>
   .metric .estimator RunnyNose_Estimate All_Predictors_Estimate
   &lt;chr&gt;   &lt;chr&gt;                   &lt;dbl&gt;                   &lt;dbl&gt;
 1 rmse    standard              1.19                     1.18  
-2 rsq     standard              0.00748                  0.0480
-3 mae     standard              0.868                    0.875 </code></pre>
+2 rsq     standard              0.00748                  0.0479
+3 mae     standard              0.868                    0.871 </code></pre>
 </div>
 </div>
 <p>From the table we can conclude that the model explains the more (R^2=4.8%) variations of BodyTemp when it includes all the interested predictors than when it only concludes RunnyNose as predictor (R^2=0.7%).</p>
@@ -854,8 +823,8 @@ Loaded glmnet 4.1-6</code></pre>
 <pre><code># A tibble: 2 × 1
   All_Predictors_No_interact_Estimate
                                 &lt;dbl&gt;
-1                               0.697
-2                               0.284</code></pre>
+1                               0.704
+2                               0.301</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Compare the model accuracy estimates of two models together in compare_table</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>Compare_table_2<span class="ot">=</span>est1<span class="sc">%&gt;%</span></span>
@@ -865,8 +834,8 @@ Loaded glmnet 4.1-6</code></pre>
 <pre><code># A tibble: 2 × 4
   .metric  .estimator RunnyNose.estimate All_Predictors_No_interact_Estimate
   &lt;chr&gt;    &lt;chr&gt;                   &lt;dbl&gt;                               &lt;dbl&gt;
-1 accuracy binary                  0.651                               0.697
-2 kap      binary                  0                                   0.284</code></pre>
+1 accuracy binary                  0.651                               0.704
+2 kap      binary                  0                                   0.301</code></pre>
 </div>
 </div>
 <p>This table indicates that when model is trained based on all predictors, it has higher accuracy than the model that is trained based on RunnyNose.</p>

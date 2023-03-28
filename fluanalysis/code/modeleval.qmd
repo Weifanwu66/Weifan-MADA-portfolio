@@ -41,19 +41,12 @@ set.seed(123)
 nausea_split=initial_split(exp_data,strata = Nausea)
 nausea_train=training(nausea_split)
 nausea_test=testing(nausea_split)
-nausea_train
 ```
 
 ### Creating workflow and fitting model using all predictors
 ### data preprocessing using recipe function
 ```{r}
-nausea_rec=recipe(Nausea~.,data=nausea_train)%>%
-  step_dummy(all_nominal_predictors(),-Weakness,-CoughIntensity,-Myalgia)%>%
-  step_mutate(Weakness = factor(Weakness, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE),
-              CoughIntensity= factor(CoughIntensity, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE),
-              Myalgia=factor(Myalgia, levels = c("None","Mild","Moderate","Severe"), ordered = TRUE)) %>%
-  step_ordinalscore(Weakness, CoughIntensity, Myalgia)%>%
-  step_nzv(all_predictors(),unique_cut = 50)
+nausea_rec=recipe(Nausea~.,data=nausea_train)
 nausea_rec
 lr_mod=logistic_reg()%>%
   set_engine("glm")
