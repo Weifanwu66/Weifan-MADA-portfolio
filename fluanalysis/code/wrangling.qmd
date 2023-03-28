@@ -26,9 +26,10 @@ skim(rawdata)
 #Clean Data
 
 ```{r}
-#remove columns containing certain strings and drop NA values
+#remove columns containing certain strings and repetitive YN variables and drop NA values
 d1=rawdata%>%
   select(!contains(c("Activity","Score","DXname","Total","FluB","FluA","unique"),ignore.case = TRUE))%>%
+  select(-CoughYN,-WeaknessYN,-CoughYN2,-MyalgiaYN)%>%
   drop_na()
 skim(d1)
 ```

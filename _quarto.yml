@@ -28,6 +28,8 @@ website:
             href: ./fluanalysis/code/fitting.html
           - text: "Model evaluation"
             href: ./fluanalysis/code/modeleval.html
+          - text: "Machine Learning"
+            href: ./fluanalysis/code/machinelearning.html
     right:
       - icon: github 
         href: "https://github.com/Weifanwu66/Weifan-MADA-portfolio"

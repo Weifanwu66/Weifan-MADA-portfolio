@@ -188,6 +188,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <a class="dropdown-item" href="../.././fluanalysis/code/fitting.html">
  <span class="dropdown-text">fitting</span></a>
   </li>  
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/modeleval.html">
+ <span class="dropdown-text">Model evaluation</span></a>
+  </li>  
     </ul>
   </li>
 </ul>
@@ -1050,11 +1054,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <p>#Clean Data</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#remove columns containing certain strings and drop NA values</span></span>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#remove columns containing certain strings and repetitive YN variables and drop NA values</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>d1<span class="ot">=</span>rawdata<span class="sc">%&gt;%</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span><span class="fu">contains</span>(<span class="fu">c</span>(<span class="st">"Activity"</span>,<span class="st">"Score"</span>,<span class="st">"DXname"</span>,<span class="st">"Total"</span>,<span class="st">"FluB"</span>,<span class="st">"FluA"</span>,<span class="st">"unique"</span>),<span class="at">ignore.case =</span> <span class="cn">TRUE</span>))<span class="sc">%&gt;%</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(d1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>CoughYN,<span class="sc">-</span>WeaknessYN,<span class="sc">-</span>CoughYN2,<span class="sc">-</span>MyalgiaYN)<span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(d1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <table class="table table-sm table-striped">
 <caption>Data summary</caption>
@@ -1069,7 +1074,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Number of columns</td>
-<td style="text-align: left;">32</td>
+<td style="text-align: left;">28</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">_______________________</td>
@@ -1081,7 +1086,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </tr>
 <tr class="even">
 <td style="text-align: left;">factor</td>
-<td style="text-align: left;">31</td>
+<td style="text-align: left;">27</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">numeric</td>
@@ -1151,14 +1156,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: left;">Yes: 563, No: 167</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">CoughYN</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 655, No: 75</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Sneeze</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
@@ -1166,7 +1163,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">Yes: 391, No: 339</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Fatigue</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
@@ -1174,7 +1171,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">Yes: 666, No: 64</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">SubjectiveFever</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
@@ -1182,7 +1179,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">Yes: 500, No: 230</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;">Headache</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
@@ -1190,21 +1187,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: right;">2</td>
 <td style="text-align: left;">Yes: 615, No: 115</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;">Weakness</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: left;">Mod: 338, Mil: 223, Sev: 120, Non: 49</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">WeaknessYN</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 681, No: 49</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">CoughIntensity</td>
@@ -1215,28 +1204,12 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <td style="text-align: left;">Mod: 357, Sev: 172, Mil: 154, Non: 47</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">CoughYN2</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 683, No: 47</td>
-</tr>
-<tr class="even">
 <td style="text-align: left;">Myalgia</td>
 <td style="text-align: right;">0</td>
 <td style="text-align: right;">1</td>
 <td style="text-align: left;">FALSE</td>
 <td style="text-align: right;">4</td>
 <td style="text-align: left;">Mod: 325, Mil: 213, Sev: 113, Non: 79</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">MyalgiaYN</td>
-<td style="text-align: right;">0</td>
-<td style="text-align: right;">1</td>
-<td style="text-align: left;">FALSE</td>
-<td style="text-align: right;">2</td>
-<td style="text-align: left;">Yes: 651, No: 79</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">RunnyNose</td>
