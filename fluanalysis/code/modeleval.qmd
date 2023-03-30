@@ -171,6 +171,11 @@ Test_predictions =predict(BodyTemp_fit, BodyTemp_test)
 BodyTemp_aug_test = augment(BodyTemp_fit,BodyTemp_test)
 ```
 
+#library 
+```{r}
+library(Metrics)
+```
+
 ### Examining the RMSE for both models
 
 ```{r}

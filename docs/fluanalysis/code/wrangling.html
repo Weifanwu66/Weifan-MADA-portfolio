@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.280">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Weifan Wu">
+<meta name="dcterms.date" content="2023-02-25">
+
+<title>My Data Analysis Portfolio - wrangling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed fullcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">My Data Analysis Portfolio</span>
+    </a>
+  </div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../.././aboutme.html">
+ <span class="menu-text">About Me</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-projects" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Projects</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-projects">    
+        <li>
+    <a class="dropdown-item" href="../.././exercise/code/analysis_code/coding_exercise.html">
+ <span class="dropdown-text">R Coding Exercise</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././exercise/code/data_processing_code/dataanalysis_exercise.html">
+ <span class="dropdown-text">Data Analysis Exercise</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././visualization_exercise.html">
+ <span class="dropdown-text">Visualization Exercise</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././tidytuesday_exercise.html">
+ <span class="dropdown-text">Tidy Tuesday Exercise</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-fluanalysis" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">fluanalysis</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-fluanalysis">    
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/wrangling.html">
+ <span class="dropdown-text">wrangling</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/exploration.html">
+ <span class="dropdown-text">exploration</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/fitting.html">
+ <span class="dropdown-text">fitting</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/modeleval.html">
+ <span class="dropdown-text">Model evaluation</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="../.././fluanalysis/code/machinelearning.html">
+ <span class="dropdown-text">Machine Learning</span></a>
+  </li>  
+    </ul>
+  </li>
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/Weifanwu66/Weifan-MADA-portfolio"><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+              <div id="quarto-search" class="" title="Search"></div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">wrangling</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Weifan Wu </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 25, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>#Load Library</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+✔ ggplot2 3.4.1     ✔ purrr   1.0.1
+✔ tibble  3.1.8     ✔ dplyr   1.1.0
+✔ tidyr   1.3.0     ✔ stringr 1.5.0
+✔ readr   2.1.3     ✔ forcats 1.0.0
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at C:/Users/weifa/OneDrive/Documents/GitKraken/MADA/data analysis/Weifan-MADA-portfolio</code></pre>
+</div>
+</div>
+<p>#Load Data and Check Data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data_location<span class="ot">=</span><span class="fu">here</span>(<span class="st">"fluanalysis"</span>,<span class="st">"data"</span>,<span class="st">"SympAct_Any_Pos.Rda"</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>rawdata<span class="ot">=</span><span class="fu">readRDS</span>(<span class="st">"SympAct_Any_Pos.Rda"</span>,<span class="at">file=</span>data_location)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(rawdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                               DxName1
+1 Influenza like illness - Clinical Dx
+2       Acute tonsillitis, unspecified
+3 Influenza like illness - Clinical Dx
+4 Influenza like illness - Clinical Dx
+5       Acute pharyngitis, unspecified
+6 Influenza like illness - Clinical Dx
+                                       DxName2 DxName3 DxName4 DxName5
+1                                         &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;
+2         Influenza like illness - Clinical Dx    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;
+3               Acute pharyngitis, unspecified    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;
+4 Unspecified asthma with (acute) exacerbation    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;
+5         Influenza like illness - Clinical Dx    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;
+6                                         &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;    &lt;NA&gt;
+  Unique.Visit ActivityLevel ActivityLevelF SwollenLymphNodes ChestCongestion
+1 340_17632125            10             10               Yes              No
+2 340_17794836             6              6               Yes             Yes
+3 342_17737773             2              2               Yes             Yes
+4 342_17806002             2              2               Yes             Yes
+5 342_17610918             5              5               Yes              No
+6 343_17543967             3              3                No              No
+  ChillsSweats NasalCongestion CoughYN Sneeze Fatigue SubjectiveFever Headache
+1           No              No     Yes     No     Yes             Yes      Yes
+2           No             Yes     Yes     No     Yes             Yes      Yes
+3          Yes             Yes      No    Yes     Yes             Yes      Yes
+4          Yes             Yes     Yes    Yes     Yes             Yes      Yes
+5          Yes              No      No     No     Yes             Yes      Yes
+6          Yes              No     Yes    Yes     Yes             Yes      Yes
+  Weakness WeaknessYN CoughIntensity CoughYN2  Myalgia MyalgiaYN RunnyNose
+1     Mild        Yes         Severe      Yes     Mild       Yes        No
+2   Severe        Yes         Severe      Yes   Severe       Yes        No
+3   Severe        Yes           Mild      Yes   Severe       Yes       Yes
+4   Severe        Yes       Moderate      Yes   Severe       Yes       Yes
+5 Moderate        Yes           None       No     Mild       Yes        No
+6 Moderate        Yes       Moderate      Yes Moderate       Yes        No
+  AbPain ChestPain Diarrhea EyePn Insomnia ItchyEye Nausea EarPn Hearing
+1     No        No       No    No       No       No     No    No      No
+2     No        No       No    No       No       No     No   Yes     Yes
+3    Yes       Yes       No    No      Yes       No    Yes    No      No
+4     No        No       No    No      Yes       No    Yes   Yes      No
+5     No        No       No   Yes      Yes       No    Yes    No      No
+6     No       Yes      Yes    No       No       No    Yes    No      No
+  Pharyngitis Breathless ToothPn Vision Vomit Wheeze BodyTemp
+1         Yes         No      No     No    No     No     98.3
+2         Yes         No      No     No    No     No    100.4
+3         Yes        Yes     Yes     No    No     No    100.8
+4         Yes         No      No     No    No    Yes     98.8
+5         Yes         No      No     No    No     No    100.5
+6         Yes        Yes      No     No    No    Yes     98.4
+                             RapidFluA                            RapidFluB
+1 Presumptive Negative For Influenza A Presumptive Negative For Influenza B
+2                                 &lt;NA&gt;                                 &lt;NA&gt;
+3 Presumptive Negative For Influenza A Presumptive Negative For Influenza B
+4 Presumptive Negative For Influenza A Presumptive Negative For Influenza B
+5                                 &lt;NA&gt;                                 &lt;NA&gt;
+6                                 &lt;NA&gt;                                 &lt;NA&gt;
+  PCRFluA PCRFluB TransScore1 TransScore1F TransScore2 TransScore2F TransScore3
+1    &lt;NA&gt;    &lt;NA&gt;           1            1           1            1           1
+2    &lt;NA&gt;    &lt;NA&gt;           3            3           2            2           1
+3    &lt;NA&gt;    &lt;NA&gt;           4            4           3            3           2
+4    &lt;NA&gt;    &lt;NA&gt;           5            5           4            4           3
+5    &lt;NA&gt;    &lt;NA&gt;           0            0           0            0           0
+6    &lt;NA&gt;    &lt;NA&gt;           2            2           2            2           2
+  TransScore3F TransScore4 TransScore4F ImpactScore ImpactScore2 ImpactScore3
+1            1           0            0           7            6            3
+2            1           2            2           8            7            4
+3            2           4            4          14           13            9
+4            3           4            4          12           11            7
+5            0           0            0          11           10            6
+6            2           1            1          12           11            7
+  ImpactScoreF ImpactScore2F ImpactScore3F ImpactScoreFD TotalSymp1 TotalSymp1F
+1            7             6             3             7          8           8
+2            8             7             4             8         11          11
+3           14            13             9            14         18          18
+4           12            11             7            12         17          17
+5           11            10             6            11         11          11
+6           12            11             7            12         14          14
+  TotalSymp2 TotalSymp3
+1          8          8
+2         10          9
+3         17         16
+4         16         15
+5         11         11
+6         14         14</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(rawdata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">rawdata</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">735</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">63</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">character</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">factor</td>
+<td style="text-align: left;">50</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">12</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 19%">
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 5%">
+<col style="width: 5%">
+<col style="width: 8%">
+<col style="width: 12%">
+<col style="width: 15%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">min</th>
+<th style="text-align: right;">max</th>
+<th style="text-align: right;">empty</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: right;">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Unique.Visit</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">735</td>
+<td style="text-align: right;">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: left;">ordered</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: left;">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">DxName1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">25</td>
+<td style="text-align: left;">Inf: 328, Inf: 131, Fev: 101, Cou: 66</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DxName2</td>
+<td style="text-align: right;">280</td>
+<td style="text-align: right;">0.62</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">42</td>
+<td style="text-align: left;">Inf: 126, Inf: 115, Fev: 45, Cou: 41</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DxName3</td>
+<td style="text-align: right;">626</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">37</td>
+<td style="text-align: left;">Inf: 23, Inf: 14, Cou: 10, Fev: 6</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">DxName4</td>
+<td style="text-align: right;">716</td>
+<td style="text-align: right;">0.03</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">Inf: 3, Acu: 2, Enc: 2, Inf: 2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">DxName5</td>
+<td style="text-align: right;">734</td>
+<td style="text-align: right;">0.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Hea: 1, Acu: 0, Enc: 0, Oth: 0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ActivityLevelF</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">11</td>
+<td style="text-align: left;">3: 125, 5: 97, 4: 95, 2: 80</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SwollenLymphNodes</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 421, Yes: 314</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChestCongestion</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 409, No: 326</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChillsSweats</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 604, No: 131</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NasalCongestion</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 565, No: 170</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CoughYN</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 660, No: 75</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sneeze</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 395, No: 340</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fatigue</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 671, No: 64</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">SubjectiveFever</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 505, No: 230</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Headache</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 620, No: 115</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Weakness</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Mod: 341, Mil: 224, Sev: 121, Non: 49</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">WeaknessYN</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 686, No: 49</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CoughIntensity</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Mod: 360, Sev: 172, Mil: 156, Non: 47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">CoughYN2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 688, No: 47</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Myalgia</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Mod: 327, Mil: 214, Sev: 115, Non: 79</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">MyalgiaYN</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 656, No: 79</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RunnyNose</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 524, No: 211</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AbPain</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 642, Yes: 93</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChestPain</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 501, Yes: 234</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Diarrhea</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 636, Yes: 99</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EyePn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 622, Yes: 113</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Insomnia</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 419, No: 316</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ItchyEye</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 553, Yes: 182</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Nausea</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 477, Yes: 258</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EarPn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 573, Yes: 162</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hearing</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 705, Yes: 30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pharyngitis</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 614, No: 121</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Breathless</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 438, Yes: 297</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ToothPn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 569, Yes: 166</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vision</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 716, Yes: 19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vomit</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 656, Yes: 79</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wheeze</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 514, Yes: 221</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RapidFluA</td>
+<td style="text-align: right;">407</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Pos: 169, Pre: 159</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">RapidFluB</td>
+<td style="text-align: right;">407</td>
+<td style="text-align: right;">0.45</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Pre: 302, Pos: 26</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">PCRFluA</td>
+<td style="text-align: right;">581</td>
+<td style="text-align: right;">0.21</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">In: 120, In: 33, Ind: 1, Ass: 0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">PCRFluB</td>
+<td style="text-align: right;">581</td>
+<td style="text-align: right;">0.21</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">In: 145, In: 9, Ass: 0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TransScore1F</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">4: 210, 5: 195, 3: 157, 2: 107</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TransScore2F</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">4: 294, 3: 201, 2: 138, 1: 89</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TransScore3F</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">3: 323, 2: 222, 1: 166, 0: 24</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TransScore4F</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">3: 230, 4: 198, 2: 154, 1: 103</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ImpactScoreF</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">8: 105, 9: 104, 10: 88, 7: 84</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ImpactScore2F</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">16</td>
+<td style="text-align: left;">7: 107, 8: 102, 9: 90, 10: 86</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ImpactScore3F</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;">4: 134, 5: 112, 3: 108, 6: 102</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ImpactScoreFD</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">17</td>
+<td style="text-align: left;">8: 105, 9: 104, 10: 88, 7: 84</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TotalSymp1F</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">19</td>
+<td style="text-align: left;">12: 86, 13: 84, 14: 80, 11: 72</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 7%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ActivityLevel</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">4.46</td>
+<td style="text-align: right;">2.64</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: right;">6.0</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: left;">▆▇▆▅▂</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">BodyTemp</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.99</td>
+<td style="text-align: right;">98.94</td>
+<td style="text-align: right;">1.20</td>
+<td style="text-align: right;">97.2</td>
+<td style="text-align: right;">98.2</td>
+<td style="text-align: right;">98.5</td>
+<td style="text-align: right;">99.3</td>
+<td style="text-align: right;">103.1</td>
+<td style="text-align: left;">▇▇▂▁▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TransScore1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">3.47</td>
+<td style="text-align: right;">1.31</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: left;">▂▅▆▇▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TransScore2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.92</td>
+<td style="text-align: right;">1.11</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: left;">▁▂▃▆▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TransScore3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.15</td>
+<td style="text-align: right;">0.88</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">1.0</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: left;">▁▅▁▆▇</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TransScore4</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.58</td>
+<td style="text-align: right;">1.21</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: left;">▂▃▆▇▇</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ImpactScore</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">9.51</td>
+<td style="text-align: right;">2.84</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">8.0</td>
+<td style="text-align: right;">9.0</td>
+<td style="text-align: right;">11.0</td>
+<td style="text-align: right;">18.0</td>
+<td style="text-align: left;">▂▇▇▅▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ImpactScore2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">8.58</td>
+<td style="text-align: right;">2.78</td>
+<td style="text-align: right;">2.0</td>
+<td style="text-align: right;">7.0</td>
+<td style="text-align: right;">8.0</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">17.0</td>
+<td style="text-align: left;">▂▇▆▃▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ImpactScore3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">5.06</td>
+<td style="text-align: right;">2.34</td>
+<td style="text-align: right;">0.0</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: right;">7.0</td>
+<td style="text-align: right;">13.0</td>
+<td style="text-align: left;">▂▇▃▂▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TotalSymp1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">12.99</td>
+<td style="text-align: right;">3.41</td>
+<td style="text-align: right;">5.0</td>
+<td style="text-align: right;">11.0</td>
+<td style="text-align: right;">13.0</td>
+<td style="text-align: right;">15.0</td>
+<td style="text-align: right;">23.0</td>
+<td style="text-align: left;">▂▇▇▅▁</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">TotalSymp2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">12.43</td>
+<td style="text-align: right;">3.22</td>
+<td style="text-align: right;">4.0</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">12.0</td>
+<td style="text-align: right;">15.0</td>
+<td style="text-align: right;">22.0</td>
+<td style="text-align: left;">▁▇▇▅▁</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">TotalSymp3</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">11.66</td>
+<td style="text-align: right;">3.10</td>
+<td style="text-align: right;">3.0</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">12.0</td>
+<td style="text-align: right;">14.0</td>
+<td style="text-align: right;">21.0</td>
+<td style="text-align: left;">▁▇▇▅▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>#Clean Data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#remove columns containing certain strings and repetitive YN variables and drop NA values</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>d1<span class="ot">=</span>rawdata<span class="sc">%&gt;%</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span><span class="fu">contains</span>(<span class="fu">c</span>(<span class="st">"Activity"</span>,<span class="st">"Score"</span>,<span class="st">"DXname"</span>,<span class="st">"Total"</span>,<span class="st">"FluB"</span>,<span class="st">"FluA"</span>,<span class="st">"unique"</span>),<span class="at">ignore.case =</span> <span class="cn">TRUE</span>))<span class="sc">%&gt;%</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>CoughYN,<span class="sc">-</span>WeaknessYN,<span class="sc">-</span>CoughYN2,<span class="sc">-</span>MyalgiaYN)<span class="sc">%&gt;%</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">drop_na</span>()</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">skim</span>(d1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;">d1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Number of rows</td>
+<td style="text-align: left;">730</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Number of columns</td>
+<td style="text-align: left;">28</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">_______________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Column type frequency:</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">factor</td>
+<td style="text-align: left;">27</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">numeric</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">________________________</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Group variables</td>
+<td style="text-align: left;">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: factor</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 18%">
+<col style="width: 10%">
+<col style="width: 14%">
+<col style="width: 8%">
+<col style="width: 9%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: left;">ordered</th>
+<th style="text-align: right;">n_unique</th>
+<th style="text-align: left;">top_counts</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">SwollenLymphNodes</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 418, Yes: 312</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChestCongestion</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 407, No: 323</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ChillsSweats</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 600, No: 130</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">NasalCongestion</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 563, No: 167</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sneeze</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 391, No: 339</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fatigue</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 666, No: 64</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">SubjectiveFever</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 500, No: 230</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Headache</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 615, No: 115</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Weakness</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Mod: 338, Mil: 223, Sev: 120, Non: 49</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">CoughIntensity</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Mod: 357, Sev: 172, Mil: 154, Non: 47</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Myalgia</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">Mod: 325, Mil: 213, Sev: 113, Non: 79</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">RunnyNose</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 519, No: 211</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AbPain</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 639, Yes: 91</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ChestPain</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 497, Yes: 233</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Diarrhea</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 631, Yes: 99</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EyePn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 617, Yes: 113</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Insomnia</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 415, No: 315</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ItchyEye</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 551, Yes: 179</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Nausea</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 475, Yes: 255</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EarPn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 568, Yes: 162</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hearing</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 700, Yes: 30</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pharyngitis</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Yes: 611, No: 119</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Breathless</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 436, Yes: 294</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ToothPn</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 565, Yes: 165</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Vision</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 711, Yes: 19</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Vomit</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 652, Yes: 78</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wheeze</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">FALSE</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">No: 510, Yes: 220</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 17%">
+<col style="width: 12%">
+<col style="width: 17%">
+<col style="width: 7%">
+<col style="width: 5%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 6%">
+<col style="width: 7%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">skim_variable</th>
+<th style="text-align: right;">n_missing</th>
+<th style="text-align: right;">complete_rate</th>
+<th style="text-align: right;">mean</th>
+<th style="text-align: right;">sd</th>
+<th style="text-align: right;">p0</th>
+<th style="text-align: right;">p25</th>
+<th style="text-align: right;">p50</th>
+<th style="text-align: right;">p75</th>
+<th style="text-align: right;">p100</th>
+<th style="text-align: left;">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">BodyTemp</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">98.94</td>
+<td style="text-align: right;">1.2</td>
+<td style="text-align: right;">97.2</td>
+<td style="text-align: right;">98.2</td>
+<td style="text-align: right;">98.5</td>
+<td style="text-align: right;">99.3</td>
+<td style="text-align: right;">103.1</td>
+<td style="text-align: left;">▇▇▂▁▁</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>#Save Data</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>processed_data<span class="ot">=</span>d1</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>save_data_location1<span class="ot">=</span>here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"fluanalysis"</span>,<span class="st">"data"</span>,<span class="st">"processed_data.rds"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(processed_data,<span class="at">file=</span>save_data_location1) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
