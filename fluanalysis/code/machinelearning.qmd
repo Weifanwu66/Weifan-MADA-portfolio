@@ -38,6 +38,7 @@ set.seed(123)
 bodytemp_split=initial_split(exp_data,prop=0.7,strata = BodyTemp)
 bodytemp_train=training(bodytemp_split)
 bodytemp_test=testing(bodytemp_split)
+bodytemp_train
 # data re-sampling using cross-validation
 bodytemp_folds=vfold_cv(bodytemp_train,v=5,repeats = 5,strata = BodyTemp)
 # Create a recipe
@@ -61,6 +62,7 @@ bodytemp_wf=workflow()%>%
 ## Null model performance
 
 ```{r}
+set.seed(1234)
 null_regression <- null_model() %>%
   set_engine("parsnip") %>%
   set_mode("regression")
@@ -91,7 +93,6 @@ glm_spec=linear_reg(penalty=tune(),mixture=1)%>%
   set_engine("glmnet")
 
 # Random forest
-cores <- parallel::detectCores()
 rf_spec=
   rand_forest(mtry=tune(),min_n=tune(),trees=1000)%>%
   set_engine("ranger",num.threads=cores)%>%
@@ -135,6 +136,7 @@ glm_grid%>%
 
 ```{r}
 # Decision Tree
+set.seed(345)
 tree_rs=tree_wf%>%
   tune_grid(
     resamples=bodytemp_folds,
@@ -192,7 +194,7 @@ bodytemp_train%>%
   select(BodyTemp)%>%
   bind_cols(tree_predict)%>%
   ggplot(aes(BodyTemp,.pred))+
-  geom_jitter()
+  geom_point()
 
 # Plotting the residuals
 # Calculate residuals
@@ -205,7 +207,6 @@ ggplot(resid_df_tree, aes(x = predicted_values,y = residuals)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(x="Predicted values",y="Residuals",title="Residual Plot for Decision Tree Model") 
-rpart.plot(extract_fit_parsnip(tree_fit)$fit)
 ```
 
 ### LASSO
@@ -238,7 +239,9 @@ bodytemp_train%>%
   select(BodyTemp)%>%
   bind_cols(glm_predict)%>%
   ggplot(aes(BodyTemp,.pred))+
-  geom_jitter()
+  geom_point()+
+  geom_abline(intercept=0,slope=1)+
+  labs(y="Predicted Temperature",title="Predicted body temperature VS Body temperature by LASSO")
 # Residuals analysis
 # Calculate residuals
 glm_resid <- bodytemp_train$BodyTemp - glm_predict
@@ -250,8 +253,7 @@ ggplot(resid_df_glm, aes(x = predicted_values,y = residuals)) +
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(x="Predicted values",y="Residuals",title="Residual Plot for GLM Model") 
-x=glm_fit$fit$fit$fit
-plot(x,"lambda")
+
 ```
 
 ### Random forest
@@ -285,7 +287,9 @@ bodytemp_train%>%
   select(BodyTemp)%>%
   bind_cols(rf_predict)%>%
   ggplot(aes(BodyTemp,.pred))+
-  geom_jitter()
+  geom_point()+
+  geom_abline(intercept=0,slope=1)+
+  labs(y="Predicted Temperature",title="Predicted body temperature VS Body temperature by random forest")
 
 # Plotting the residuals
 # Calculate residuals
@@ -344,8 +348,10 @@ glm_fit_final%>%
 # Plotting the true values vs predicted values
 glm_predict_final%>%
   ggplot(aes(BodyTemp,.pred))+
-  geom_jitter()+
-  geom_smooth()
+  geom_point()+
+  geom_smooth()+
+  geom_abline(intercept=0,slope=1)+
+  labs(y="Predicted body temperature","Predicted body temperature VS body temperature by LASSO in testing data")
 ## Plot residuals
 final_resid=glm_predict_final$BodyTemp-glm_predict_final$.pred
 final_resid_df=data.frame(final_resid,glm_predict_final$.pred)

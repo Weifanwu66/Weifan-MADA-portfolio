@@ -15,9 +15,11 @@ website:
           - text: "Data Analysis Exercise"
             href: ./exercise/code/data_processing_code/dataanalysis_exercise.html
           - text: "Visualization Exercise"
-            href: ./visualization_exercise.html
+            href: ./exercise/code/analysis_code/visualization_exercise.html
           - text: "Tidy Tuesday Exercise"
-            href: ./tidytuesday_exercise.html
+            href: ./exercise/code/analysis_code/tidytuesday_exercise.html
+          - text: "Tidy Tuesday 2 Exercise"
+            href: ./exercise/code/analysis_code/tidytuesday_exercise2.html  
       - text: "fluanalysis"
         menu:
           - text: "wrangling"
