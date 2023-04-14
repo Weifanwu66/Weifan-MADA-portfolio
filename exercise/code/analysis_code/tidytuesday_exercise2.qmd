@@ -1,11 +1,13 @@
 ---
-title: "Tidy Tuesday Exercise"
-output: 
-  html_document:
-    toc: FALSE
+title: "Tidy Tuesday Exercise 2"
+author: "Weifan Wu"
+editor: visual
+output: html_document
+date: "04/11/2023"
 ---
+
 ## Load library
-install.packages("xgboost")
+
 ```{r}
 # For data wrangling and EDA
 library(tidyverse)
@@ -28,11 +30,14 @@ library(rpart)
 ```
 
 ## Import data
+
 ```{r}
 eggproduction  <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-11/egg-production.csv')
 cagefreepercentages <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-11/cage-free-percentages.csv')
 ```
+
 # Checking data sets
+
 ```{r}
 skim(eggproduction)
 skim(cagefreepercentages)
@@ -49,6 +54,7 @@ cagefreepercentages%>%
 ```
 
 # Join two tables
+
 ```{r}
 # Separate the year and month into two columns
 # Create a new feature: The number of eggs produced by one hen
@@ -62,8 +68,11 @@ egg_data=eggproduction%>%
   relocate(year,month)%>%
   na.omit()
 ```
+
 ## EDA
+
 ### Outcome explorations
+
 ```{r}
 # Distribution of the eggs ratio
 egg_data%>%
@@ -71,9 +80,11 @@ egg_data%>%
   geom_histogram()+
   labs(title="The distribution of the number of eggs produced by one hen")
 ```
+
 ### The number of hens and eggs are positively correlated. Notably there is a huge gap in the middle.
 
 ### Exploration of production types and production process
+
 ```{r}
 # hatching eggs VS table eggs
 egg_data%>%
@@ -90,7 +101,9 @@ egg_data%>%
   summarise(mean=mean(egg_ratio))%>%
   kable()
 ```
+
 ### More eggs are produced by one hen if the production type is table eggs; egg/hen ratio is higher if the production process if cage free
+
 ### There are more conventional housing eggs than cage free eggs, there are more organic eggs than non-orgnic eggs
 
 ```{r fig.width=8}
@@ -103,8 +116,11 @@ egg_data%>%
   labs(y="The egg ratio",x="month",title="The egg ratio in different month")+
   theme_minimal()
 ```
+
 ### The production process for all the hatching eggs is "all" and there are three types of production process for the table eggs
+
 ### Exploration of time VS egg ratio
+
 ```{r fig.width=8}
 # The ratio of table eggs to hens produced every month by different process
 egg_data%>%
@@ -141,11 +157,15 @@ egg_data%>%
   labs(title="hatching egg ratio VS year")+
   theme_minimal()
 ```
+
 ### Overall, the egg ratio is the lowest in Feburary
+
 ### The table egg ratio is increasing throughout years whereas hatching egg ratio remains stable
 
 ## Let's create a model to predict the egg ratio based on `year`,`month`,`prod_type`,`prod_process`
+
 ```{r}
+# set.seed for reproducible results
 set.seed(123)
 egg_split=
   egg_data%>%
@@ -165,6 +185,7 @@ egg_wf=workflow()%>%
 ```
 
 ## Random forest
+
 ```{r}
 rf_spec=rand_forest(mtry=tune(),min_n = tune(),trees=1000)%>%
   set_engine("ranger")%>%
@@ -187,13 +208,21 @@ rf_rs=tune_grid(
 )
 
 ```
+
 ### Model evaluation
+
 ```{r}
 autoplot(rf_rs)
-rf_rs%>%
-  show_best("rmse")
+# Selecting the lowest rmse
+rf_best_metrics=rf_rs%>%
+  show_best("rmse")%>%
+  filter(mean==min(mean))
+
+# Selecting the tuning parameters with the lowest rmse
 best_rf=rf_rs%>%
   select_best("rmse")
+
+# Finalizing the workflow
 rf_final=rf_wf%>%
   finalize_workflow(best_rf)
 
@@ -212,14 +241,17 @@ egg_train%>%
 ```
 
 ## Bagging
+
 ```{r}
 # two bagging models
+# Model specifications
 tree_spec=bag_tree()%>%
   set_engine("rpart",times=25)%>%
   set_mode("regression")
 mars_spec=bag_mars()%>%
   set_engine("earth",times=25)%>%
   set_mode("regression")
+# Workflows
 tree_wf=egg_wf%>%
   add_model(tree_spec)
 mars_wf=egg_wf%>%
@@ -239,9 +271,13 @@ mars_rs=
 ```
 
 ### Model evaluation
+
 ```{r}
-collect_metrics(tree_rs)
-collect_metrics(mars_rs)
+# Checking "rmse" metrics of these models
+tree_best_metrics=collect_metrics(tree_rs)%>%
+  filter(.metric=="rmse")
+mars_best_metrics=collect_metrics(mars_rs)%>%
+  filter(.metric=="rmse")
 # Plotting predicted value VS true value
 mars_rs%>%
   collect_predictions()%>%
@@ -252,7 +288,9 @@ mars_rs%>%
   geom_smooth(se=FALSE)+
   labs(title="predicted egg ratio VS true egg ratio by bagging")
 ```
+
 ## LASSO
+
 ```{r}
 set.seed(1234)
 # LASSO model specification
@@ -270,18 +308,22 @@ glmnet_rs=tune_grid(
   param_info = parameters(narrow_penalty)
 )
 ```
-# Model evaluation
-```{r}
-autoplot(glmnet_rs)
 
-best_penalty=glmnet_rs%>%
+# Model evaluation
+
+```{r}
+# Checking the tuning parameters and their respective model performances
+autoplot(glmnet_rs)
+# Select the simplest model that has the same performance as the best model
+glm_best_penalty=glmnet_rs%>%
   select_by_one_std_err(-penalty,metric="rmse")
 glmnet_final=glmnet_wf%>%
-  finalize_workflow(best_penalty)
+  finalize_workflow(glm_best_penalty)
 glmnet_fit=glmnet_final%>%
   fit(egg_train)
 glmnet_predict=glmnet_fit%>%
   predict(egg_train)
+# Plotting predicted egg ratio VS true egg ratio
 egg_train%>%
   select(egg_ratio)%>%
   bind_cols(glmnet_predict)%>%
@@ -294,7 +336,9 @@ egg_train%>%
 ```
 
 # XGBOOST
+
 ```{r}
+# Model specification
 xgb_spec <- boost_tree(
   trees = 1000,
   tree_depth = tune(), min_n = tune(),
@@ -309,6 +353,7 @@ xgb_spec
 ```
 
 ```{r}
+# Defining hyperparameters
 xgb_grid <- grid_latin_hypercube(
   tree_depth(),
   min_n(),
@@ -327,7 +372,7 @@ xgb_grid
 xgb_wf <- egg_wf %>%
   add_model(xgb_spec)
 doParallel::registerDoParallel()
-
+# Tune grid
 set.seed(2345)
 xgb_res <- tune_grid(
   xgb_wf,
@@ -340,11 +385,13 @@ xgb_res
 ```
 
 # Model evaluation
+
 ```{r}
 collect_metrics(xgb_res)
 autoplot(xgb_res)
-xgb_res%>%
-  show_best()
+xgb_best_metrics=xgb_res%>%
+  show_best()%>%
+  filter(mean==min(mean))
 best_xgb=xgb_res%>%
   select_best("rmse")
 final_xgb=xgb_wf%>%
@@ -368,7 +415,31 @@ final_xgb%>%
   pull_workflow_fit()%>%
   vip(geom="point")
 ```
-# Using bagging (mars) to fit testing data
+
+## Organzing model performance of each model into a tibble
+
+```{r}
+rf_best_metrics%>%
+  select(.metric,mean,std_err)%>%
+  mutate(model="random forest")%>%
+  bind_rows(tree_best_metrics%>%
+              select(.metric,mean,std_err)%>%
+              mutate(model="tree"))%>%
+  bind_rows(mars_best_metrics%>%
+              select(.metric,mean,std_err)%>%
+              mutate(model="mars"))%>%
+    bind_rows(glm_best_penalty%>%
+              select(.metric,mean,std_err)%>%
+              mutate(model="LASSO"))%>%
+    bind_rows(xgb_best_metrics%>%
+              select(.metric,mean,std_err)%>%
+              mutate(model="xgboost"))%>%
+  arrange(mean)%>%
+  knitr::kable()
+```
+
+## Using bagging (mars) to fit testing data since it has the lowest rmse and lowest standard error
+
 ```{r}
 final_fit=mars_wf%>%
   last_fit(egg_split)
@@ -377,4 +448,6 @@ important_terms <- final_fit$.workflow[[1]]$fit$fit
 important_terms
 ```
 
+## The model performance rmse is 0.448 when the final XGBOOST model fits testing data
 
+## The most important variable contributing to this model seems to be the production type table eggs

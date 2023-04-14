@@ -93,9 +93,10 @@ glm_spec=linear_reg(penalty=tune(),mixture=1)%>%
   set_engine("glmnet")
 
 # Random forest
+cores <- parallel::detectCores()
 rf_spec=
   rand_forest(mtry=tune(),min_n=tune(),trees=1000)%>%
-  set_engine("ranger",num.threads=cores)%>%
+  set_engine("ranger",num.threads = cores)%>%
   set_mode("regression")
 ```
 
@@ -109,7 +110,7 @@ tree_wf=bodytemp_wf%>%
 glm_wf=bodytemp_wf%>%
   add_model(glm_spec)
 # Random forest
-rf_wf=bodytemp_wf%>%
+rf_workflow=bodytemp_wf%>%
   add_model(rf_spec)
 ```
 
@@ -145,6 +146,7 @@ tree_rs=tree_wf%>%
 tree_rs
 
 # LASSO
+set.seed(456)
 glm_rs=glm_wf%>%
   tune_grid(
     resamples=bodytemp_folds,
@@ -153,16 +155,17 @@ glm_rs=glm_wf%>%
     metrics=metric_set(rmse)
   )
 glm_rs
-
+set.seed(567)
 # Random forest
-rf_rs=rf_wf%>%
-  tune_grid(
-    resamples=bodytemp_folds,
-    grid=25,
-    control=control_grid(save_pred=TRUE),
-    metrics = metric_set(rmse)
-  )
-rf_rs
+# rf_result=rf_workflow%>%
+#   tune_grid(
+#     resamples=bodytemp_folds,
+#     grid=25,
+#     control=control_grid(save_pred=TRUE),
+#     metrics=metric_set(rmse)
+#   )
+# rf_result
+# show_notes(.Last.tune.result)
 ```
 
 ## Evaluate the performance and finalize the model
@@ -259,49 +262,43 @@ ggplot(resid_df_glm, aes(x = predicted_values,y = residuals)) +
 ### Random forest
 
 ```{r}
-# plotting the result
-rf_rs%>%
-autoplot()
-# show the best tuning parameter
-rf_rs%>%
- show_best("rmse")
-# Selecting the best tuning parameter based on rmse
-best_rf=rf_rs%>%
-  select_best("rmse")
-best_rf
-# Finalize the workflow
-rf_final=
-  rf_wf%>%
-  finalize_workflow(best_rf)
-rf_final
-# Fitting training data
-rf_fit=rf_final%>%
-  fit(bodytemp_train)
-# Predicted value
-rf_predict=glm_final%>%
-  fit(bodytemp_train)%>%
-  predict(bodytemp_train)
-rf_predict
-# Plotting the true values vs predicted values
-bodytemp_train%>%
-  select(BodyTemp)%>%
-  bind_cols(rf_predict)%>%
-  ggplot(aes(BodyTemp,.pred))+
-  geom_point()+
-  geom_abline(intercept=0,slope=1)+
-  labs(y="Predicted Temperature",title="Predicted body temperature VS Body temperature by random forest")
-
-# Plotting the residuals
-# Calculate residuals
-rf_resid <- bodytemp_train$BodyTemp - rf_predict
-# Create a data frame with the residuals and predicted values
-resid_df_rf <- data.frame(rf_resid, rf_predict)
-colnames(resid_df_rf) <- c("residuals", "predicted_values")
-# Draw the residual plot
-ggplot(resid_df_rf, aes(x = predicted_values,y = residuals)) +
-  geom_point() +
-  geom_hline(yintercept = 0, linetype = "dashed") +
-  labs(x="Predicted values",y="Residuals",title="Residual Plot for Random Forest Model")
+# # Selecting the best tuning parameter based on rmse
+# best_rf=rf_result%>%
+#   select_best("rmse")
+# best_rf
+# # Finalize the workflow
+# rf_final_workflow=
+#   rf_workflow%>%
+#   finalize_workflow(best_rf)
+# rf_final_workflow
+# # Fitting training data
+# rf_fit=rf_final_workflow%>%
+#   fit(bodytemp_train)
+# # Predicted value
+# rf_predict=rf_final_workflow%>%
+#   fit(bodytemp_train)%>%
+#   predict(bodytemp_train)
+# rf_predict
+# # Plotting the true values vs predicted values
+# bodytemp_train%>%
+#   select(BodyTemp)%>%
+#   bind_cols(rf_predict)%>%
+#   ggplot(aes(BodyTemp,.pred))+
+#   geom_point()+
+#   geom_abline(intercept=0,slope=1)+
+#   labs(y="Predicted Temperature",title="Predicted body temperature VS Body temperature by random forest")
+# 
+# # Plotting the residuals
+# # Calculate residuals
+# rf_resid <- bodytemp_train$BodyTemp - rf_predict
+# # Create a data frame with the residuals and predicted values
+# resid_df_rf <- data.frame(rf_resid, rf_predict)
+# colnames(resid_df_rf) <- c("residuals", "predicted_values")
+# # Draw the residual plot
+# ggplot(resid_df_rf, aes(x = predicted_values,y = residuals)) +
+#   geom_point() +
+#   geom_hline(yintercept = 0, linetype = "dashed") +
+#   labs(x="Predicted values",y="Residuals",title="Residual Plot for Random Forest Model")
 ```
 
 ## Compare three models with the null model
@@ -313,18 +310,18 @@ tree_metrics=tree_rs%>%
 glm_metrics=glm_rs%>%
  show_best("rmse")%>%
   filter(.config=="Preprocessor1_Model27")
-rf_metrics=rf_rs%>%
- show_best("rmse")%>%
-  filter(.config=="Preprocessor1_Model22")
+# rf_metrics=rf_result%>%
+#  show_best("rmse")%>%
+#   filter(.config=="Preprocessor1_Model22")
 null_rs%>%
   collect_metrics()%>%
   mutate(model="Null")%>%
   bind_rows(tree_metrics%>%
               mutate(model="tree"),
             glm_metrics%>%
-              mutate(model="LASSO"),
-            rf_metrics%>%
-              mutate(model="random forest")
+            mutate(model="LASSO")
+            # rf_metrics%>%
+            #   mutate(model="random forest")
     
   )%>%
   select(c(1:6),model)%>%
