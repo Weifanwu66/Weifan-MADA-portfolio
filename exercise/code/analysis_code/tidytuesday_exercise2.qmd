@@ -238,6 +238,10 @@ egg_train%>%
   geom_smooth()+
   geom_abline(intercept=0,slope=1)+
   labs(title="predicted egg ratio VS true egg ratio")
+#rf_final%>%
+  #fit(egg_train)%>%
+  #pull_workflow_fit()%>%
+  #vip(geom="point")
 ```
 
 ## Bagging
