@@ -1,0 +1,493 @@
+---
+title: "Tidy Tuesday Exercise 2"
+author: "Weifan Wu"
+editor: visual
+output: html_document
+date: "04/11/2023"
+---
+
+
+## Load library
+
+
+```{r}
+# For data wrangling and EDA
+library(tidyverse)
+# For browsing data
+library(skimr)
+# For handling date data
+library(lubridate)
+library(tidymodels)
+# For generating tables
+library(knitr)
+# For variable importance
+library(vip)
+# For bagging model
+library(baguette)
+# For xgboost
+library(xgboost)
+# For plotting decision trees
+library(rpart.plot)
+library(rpart)
+```
+
+
+## Import data
+
+
+```{r}
+eggproduction  <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-11/egg-production.csv')
+cagefreepercentages <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2023/2023-04-11/cage-free-percentages.csv')
+```
+
+
+# Checking data sets
+
+
+```{r}
+skim(eggproduction)
+skim(cagefreepercentages)
+```
+
+```{r}
+# Explore the categories of prod_type and prod_process
+eggproduction%>%
+  distinct(prod_type,prod_process,source)
+# Explore the source
+cagefreepercentages%>%
+  distinct(source)
+# Source will not be included in the model  
+```
+
+
+# Join two tables
+
+
+```{r}
+# Separate the year and month into two columns
+# Create a new feature: The number of eggs produced by one hen
+egg_data=eggproduction%>%
+  left_join(cagefreepercentages,by="observed_month")%>%
+  select(-source.x,-source.y)%>%
+  mutate(egg_ratio=n_eggs/n_hens)%>%
+  mutate(year=year(observed_month),
+         month=month(observed_month))%>%
+  select(-observed_month)%>%
+  relocate(year,month)%>%
+  na.omit()
+```
+
+
+## EDA
+
+### Outcome explorations
+
+
+```{r}
+# Distribution of the eggs ratio
+egg_data%>%
+  ggplot(aes(egg_ratio))+
+  geom_histogram()+
+  labs(title="The distribution of the number of eggs produced by one hen")
+```
+
+
+### The number of hens and eggs are positively correlated. Notably there is a huge gap in the middle.
+
+### Exploration of production types and production process
+
+
+```{r}
+# hatching eggs VS table eggs
+egg_data%>%
+  count(prod_type)
+egg_data%>%
+  group_by(prod_type)%>%
+  summarise(mean=mean(egg_ratio))%>%
+  kable()
+# all vs cage free ()
+egg_data%>%
+  count(prod_process)
+egg_data%>%
+  group_by(prod_process)%>%
+  summarise(mean=mean(egg_ratio))%>%
+  kable()
+```
+
+
+### More eggs are produced by one hen if the production type is table eggs; egg/hen ratio is higher if the production process if cage free
+
+### There are more conventional housing eggs than cage free eggs, there are more organic eggs than non-orgnic eggs
+
+
+```{r fig.width=8}
+# Month VS number of hens by different production process and different production types
+egg_data%>%
+  ggplot(aes(month,egg_ratio,fill=prod_process))+
+  geom_col(alpha=0.5,position="dodge")+
+  facet_wrap(~prod_type)+
+  scale_x_continuous(breaks=seq(1,12,by=1),labels=c("1","2","3","4","5","6","7","8","9","10","11","12"),minor_breaks=NULL)+
+  labs(y="The egg ratio",x="month",title="The egg ratio in different month")+
+  theme_minimal()
+```
+
+
+### The production process for all the hatching eggs is "all" and there are three types of production process for the table eggs
+
+### Exploration of time VS egg ratio
+
+
+```{r fig.width=8}
+# The ratio of table eggs to hens produced every month by different process
+egg_data%>%
+  filter(prod_type=="table eggs")%>%
+  ggplot(aes(month,egg_ratio))+
+  geom_line(alpha=0.5,size=1.2)+
+  scale_x_continuous(breaks=seq(1,12,by=1),labels=c("1","2","3","4","5","6","7","8","9","10","11","12"),minor_breaks=NULL)+
+  facet_wrap(~prod_process,scales="free_y")+
+  labs(title="table eggs ratio VS month by different process")+
+  theme_minimal()
+# The ratio of hatching eggs produced every month
+egg_data%>%
+  filter(prod_type=="hatching eggs")%>%
+  ggplot(aes(month,egg_ratio))+
+  geom_line(alpha=0.5,size=1.2)+
+  scale_x_continuous(breaks=seq(1,12,by=1),labels=c("1","2","3","4","5","6","7","8","9","10","11","12"),minor_breaks=NULL)+
+  labs(title="hatching egg ratio VS month")+
+  theme_minimal()
+# The ratio of table eggs to hens produced every year by different process
+egg_data%>%
+  mutate(year=factor(year))%>%
+  filter(prod_type=="table eggs")%>%
+  ggplot(aes(year,egg_ratio,fill=year))+
+  geom_boxplot(alpha=0.5,size=1.2,show.legend = FALSE)+
+  facet_wrap(~prod_process,scales="free_y")+
+  labs(title="table eggs ratio VS year by different process")+
+  theme_minimal()
+# The ratio of hatching eggs to hens produced throughout years
+egg_data%>%
+  mutate(year=factor(year))%>%
+  filter(prod_type=="hatching eggs")%>%
+  ggplot(aes(year,egg_ratio,fill=year))+
+  geom_boxplot(alpha=0.5,size=1.2,show.legend = FALSE)+
+  labs(title="hatching egg ratio VS year")+
+  theme_minimal()
+```
+
+
+### Overall, the egg ratio is the lowest in Feburary
+
+### The table egg ratio is increasing throughout years whereas hatching egg ratio remains stable
+
+## Let's create a model to predict the egg ratio based on `year`,`month`,`prod_type`,`prod_process`
+
+
+```{r}
+# set.seed for reproducible results
+set.seed(123)
+egg_split=
+  egg_data%>%
+  select(year,month,prod_type,prod_process,egg_ratio)%>%
+  initial_split(strata=prod_type)
+egg_train=training(egg_split)
+egg_test=testing(egg_split)
+egg_folds=vfold_cv(egg_train,strata=prod_type)
+```
+
+```{r}
+# Create recipe and workflow
+egg_rec=recipe(egg_ratio~.,data=egg_train)%>%
+  step_dummy(all_nominal_predictors())
+egg_wf=workflow()%>%
+  add_recipe(egg_rec)
+```
+
+
+## Random forest
+
+
+```{r}
+rf_spec=rand_forest(mtry=tune(),min_n = tune(),trees=1000)%>%
+  set_engine("ranger")%>%
+  set_mode("regression")
+```
+
+```{r}
+rf_wf=egg_wf%>%
+  add_model(rf_spec)
+```
+
+```{r}
+doParallel::registerDoParallel()
+set.seed(345)
+rf_rs=tune_grid(
+  rf_wf,
+  resamples=egg_folds,
+  grid=25,
+  metrics=metric_set(rmse,rsq)
+)
+
+```
+
+
+### Model evaluation
+
+
+```{r}
+autoplot(rf_rs)
+# Selecting the lowest rmse
+rf_best_metrics=rf_rs%>%
+  show_best("rmse")%>%
+  filter(mean==min(mean))
+
+# Selecting the tuning parameters with the lowest rmse
+best_rf=rf_rs%>%
+  select_best("rmse")
+
+# Finalizing the workflow
+rf_final=rf_wf%>%
+  finalize_workflow(best_rf)
+
+# Plotting predicted vs true value
+rf_predict=rf_final%>%
+  fit(egg_train)%>%
+  predict(egg_train)
+egg_train%>%
+  select(egg_ratio)%>%
+  bind_cols(rf_predict)%>%
+  ggplot(aes(egg_ratio,.pred))+
+  geom_point()+
+  geom_smooth()+
+  geom_abline(intercept=0,slope=1)+
+  labs(title="predicted egg ratio VS true egg ratio")
+```
+
+
+## Bagging
+
+
+```{r}
+# two bagging models
+# Model specifications
+tree_spec=bag_tree()%>%
+  set_engine("rpart",times=25)%>%
+  set_mode("regression")
+mars_spec=bag_mars()%>%
+  set_engine("earth",times=25)%>%
+  set_mode("regression")
+# Workflows
+tree_wf=egg_wf%>%
+  add_model(tree_spec)
+mars_wf=egg_wf%>%
+  add_model(mars_spec)
+```
+
+```{r}
+set.seed(234)
+tree_rs=
+  fit_resamples(tree_wf,
+                resample=egg_folds,
+                control=control_resamples(save_pred=TRUE,verbose = TRUE))
+mars_rs=
+  fit_resamples(mars_wf,
+                resample=egg_folds,
+                control=control_resamples(save_pred=TRUE,verbose = TRUE))
+```
+
+
+### Model evaluation
+
+
+```{r}
+# Checking "rmse" metrics of these models
+tree_best_metrics=collect_metrics(tree_rs)%>%
+  filter(.metric=="rmse")
+mars_best_metrics=collect_metrics(mars_rs)%>%
+  filter(.metric=="rmse")
+# Plotting predicted value VS true value
+mars_rs%>%
+  collect_predictions()%>%
+  group_by(id)%>%
+  ggplot(aes(egg_ratio,.pred,color=id))+
+  geom_point()+
+  geom_abline(intercept=0,slope=1,lty=2,size=1.5,color="gray80")+
+  geom_smooth(se=FALSE)+
+  labs(title="predicted egg ratio VS true egg ratio by bagging")
+```
+
+
+## LASSO
+
+
+```{r}
+set.seed(1234)
+# LASSO model specification
+glmnet_spec=linear_reg(penalty=tune(),mixture=1)%>%
+  set_engine("glmnet")
+# LASSO workflow
+glmnet_wf=egg_wf%>%
+  add_model(glmnet_spec)
+# Narrowing down the penalty range
+narrow_penalty=penalty(range=c(-3,0))
+glmnet_rs=tune_grid(
+  glmnet_wf,
+  resamples = egg_folds,
+  grid=25,
+  param_info = parameters(narrow_penalty)
+)
+```
+
+
+# Model evaluation
+
+
+```{r}
+# Checking the tuning parameters and their respective model performances
+autoplot(glmnet_rs)
+# Select the simplest model that has the same performance as the best model
+glm_best_penalty=glmnet_rs%>%
+  select_by_one_std_err(-penalty,metric="rmse")
+glmnet_final=glmnet_wf%>%
+  finalize_workflow(glm_best_penalty)
+glmnet_fit=glmnet_final%>%
+  fit(egg_train)
+glmnet_predict=glmnet_fit%>%
+  predict(egg_train)
+# Plotting predicted egg ratio VS true egg ratio
+egg_train%>%
+  select(egg_ratio)%>%
+  bind_cols(glmnet_predict)%>%
+  ggplot(aes(egg_ratio,.pred))+
+  geom_point()+
+  geom_abline(intercept=0,slope=1,lty=2,size=1.5,color="gray80")+
+  geom_smooth(se=FALSE)+
+    labs(title="predicted egg ratio VS true egg ratio by LASSO")
+
+```
+
+
+# XGBOOST
+
+
+```{r}
+# Model specification
+xgb_spec <- boost_tree(
+  trees = 1000,
+  tree_depth = tune(), min_n = tune(),
+  loss_reduction = tune(),                     ## first three: model complexity
+  sample_size = tune(), mtry = tune(),         ## randomness
+  learn_rate = tune()                          ## step size
+) %>%
+  set_engine("xgboost") %>%
+  set_mode("regression")
+
+xgb_spec
+```
+
+```{r}
+# Defining hyperparameters
+xgb_grid <- grid_latin_hypercube(
+  tree_depth(),
+  min_n(),
+  loss_reduction(),
+  sample_size = sample_prop(),
+  finalize(mtry(), egg_train),
+  learn_rate(),
+  size = 30
+)
+
+xgb_grid
+```
+
+```{r}
+# Create workflow
+xgb_wf <- egg_wf %>%
+  add_model(xgb_spec)
+doParallel::registerDoParallel()
+# Tune grid
+set.seed(2345)
+xgb_res <- tune_grid(
+  xgb_wf,
+  resamples = egg_folds,
+  grid = xgb_grid,
+  control = control_grid(save_pred = TRUE)
+)
+
+xgb_res
+```
+
+
+# Model evaluation
+
+
+```{r}
+collect_metrics(xgb_res)
+autoplot(xgb_res)
+xgb_best_metrics=xgb_res%>%
+  show_best()%>%
+  filter(mean==min(mean))
+best_xgb=xgb_res%>%
+  select_best("rmse")
+final_xgb=xgb_wf%>%
+  finalize_workflow(best_xgb)
+xgb_predict=xgb_wf%>%
+  finalize_workflow(best_xgb)%>%
+  fit(egg_train)%>%
+  predict(egg_train)
+# Plotting predicted value VS true value
+egg_train%>%
+  select(egg_ratio)%>%
+  bind_cols(xgb_predict)%>%
+  ggplot(aes(egg_ratio,.pred))+
+  geom_point()+
+  geom_abline(intercept=0,slope=1,lty=2,size=1.5,color="gray80")+
+  geom_smooth(se=FALSE)+
+    labs(title="predicted egg ratio VS true egg ratio by xgoost")
+# Variable importance
+final_xgb%>%
+  fit(egg_train)%>%
+  pull_workflow_fit()%>%
+  vip(geom="point")
+```
+
+
+## Organzing model performance of each model into a tibble
+
+
+```{r}
+rf_best_metrics%>%
+  select(.metric,mean,std_err)%>%
+  mutate(model="random forest")%>%
+  bind_rows(tree_best_metrics%>%
+              select(.metric,mean,std_err)%>%
+              mutate(model="tree"))%>%
+  bind_rows(mars_best_metrics%>%
+              select(.metric,mean,std_err)%>%
+              mutate(model="mars"))%>%
+    bind_rows(glm_best_penalty%>%
+              select(.metric,mean,std_err)%>%
+              mutate(model="LASSO"))%>%
+    bind_rows(xgb_best_metrics%>%
+              select(.metric,mean,std_err)%>%
+              mutate(model="xgboost"))%>%
+  arrange(mean)%>%
+  knitr::kable()
+```
+
+
+## Using bagging (mars) to fit testing data since it has the lowest rmse and lowest standard error
+
+
+```{r}
+final_fit=mars_wf%>%
+  last_fit(egg_split)
+collect_metrics(final_fit) 
+important_terms <- final_fit$.workflow[[1]]$fit$fit
+important_terms
+```
+
+
+## The model performance rmse is 0.448 when the final XGBOOST model fits testing data
+
+## The most important variable contributing to this model seems to be the production type table eggs
+
